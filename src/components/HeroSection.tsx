@@ -83,6 +83,14 @@ export function HeroSection() {
         );
       });
 
+      gsap.from(".ghost-text", {
+        opacity: 0,
+        yPercent: 10,
+        duration: 1.6,
+        ease: "power2.out",
+        delay: 0.3,
+      });
+
       gsap.to(".ghost-text", {
         yPercent: -20,
         ease: "none",
@@ -143,8 +151,25 @@ export function HeroSection() {
             "linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)",
         }}
       />
+      {/* Ghost background text — faint, top-cropped */}
+      <div
+        className="absolute z-30 inset-0 overflow-hidden pointer-events-none select-none"
+        aria-hidden="true">
+        <span
+          className="ghost-text absolute top-[.3em] left-0 right-0 text-center
+                     lg:text-left lg:left-80
+                     text-[clamp(6rem,20vw,18rem)] font-black leading-none text-white/5"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, white 0%, white 20%, transparent 55%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, white 0%, white 20%, transparent 55%)",
+          }}>
+          FITNESS
+        </span>
+      </div>
       {/* ========== LEFT CONTENT PANEL (40% desktop, full width mobile) ========== */}
-      <div className="relative z-10 w-full lg:w-[40%] flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:pl-36 lg:pr-12 xl:pl-44 xl:pr-16 pt-10 pb-8 lg:py-0 order-2 lg:order-1">
+      <div className="relative z-10 w-full lg:w-[40%] flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:pl-36 lg:pr-12 xl:pl-44 xl:pr-16 pt-10 pb-8 lg:pb-0 lg:pt-32 order-2 lg:order-1">
         {/* Bottom-left warm glow vignette */}
         <div
           className="absolute bottom-0 left-0 w-72 sm:w-96 h-72 sm:h-96 pointer-events-none"
@@ -250,7 +275,7 @@ export function HeroSection() {
         <div className="gold-strip-2 pointer-events-none absolute inset-y-0 left-[28%] w-[55%] -skew-x-[28deg] origin-left bg-[#181511] z-0" />
 
         {/* Image — MIDDLE layer (above gold-light, below gold-mid) */}
-        <div className="hero-image-wrapper absolute inset-0 z-10 -left-20 overflow-hidden">
+        <div className="hero-image-wrapper absolute inset-0 z-40 -left-20 overflow-hidden">
           <Image
             src="/hero.png"
             alt="Elite athlete"
@@ -275,7 +300,7 @@ export function HeroSection() {
         </div>
 
         {/* Gold-mid strip — TOP layer (in front of image) */}
-        <div className="gold-strip-1 pointer-events-none absolute inset-y-0 left-[70%] w-[100%] -skew-x-[28deg] origin-left bg-gold-mid z-20" />
+        <div className="gold-strip-1 pointer-events-none absolute inset-y-0 left-[70%] w-[100%] -skew-x-[28deg] origin-left bg-gold-mid z-50" />
       </div>
 
       {/* ========== VISUAL PANEL — MOBILE & TABLET (< lg) ========== */}
@@ -287,7 +312,7 @@ export function HeroSection() {
               a scaled-down echo of the desktop strip motif, not a literal shrink */}
           <div className="mobile-gold-corner pointer-events-none absolute -top-10 -right-16 w-44 h-44 sm:w-56 sm:h-56 -skew-x-[28deg] bg-gold-mid/90 z-0" />
 
-          <div className="hero-image-wrapper-mobile absolute inset-0 z-10">
+          <div className="hero-image-wrapper-mobile absolute inset-0 z-40">
             <Image
               src="/hero.png"
               alt="Athlete training"
@@ -342,7 +367,7 @@ export function HeroSection() {
         </motion.div>
 
         {/* Gold accent bar at very top of the visual panel */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gold-mid z-20" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gold-mid z-50" />
       </div>
     </section>
   );
