@@ -1,8 +1,18 @@
 export const siteConfig = {
   name: "Rayhaan Fitness",
+  nameBengali: "রায়হান ফিটনেস",
   tagline: "Unleash Your Inner Strength",
   description:
-    "Expert coaching, modern equipment, and a community that pushes you further. Transform your body and mind with Rayhaan Fitness.",
+    "One of the best affordable gyms in Puran Dhaka — modern equipment, expert trainers, sauna & steam, and a welcoming community since 2016. Located at 21/c Nur Fattah Lane, Lalbag.",
+  contact: {
+    address: "21/c Nur Fattah Lane, Dhaka 1211",
+    area: "Lalbag, Puran Dhaka",
+    landmark: "Ashiyana Tower",
+    phone: "02-55155028",
+    hours: "Opens 6 AM daily · Closed Friday",
+    rating: "4.6",
+    reviews: "1,002",
+  },
   navLinks: [
     { label: "Home", href: "#" },
     { label: "About", href: "#about" },
@@ -13,7 +23,7 @@ export const siteConfig = {
   hero: {
     title: "Transform Your Body, Transform Your Life",
     subtitle:
-      "Join Rayhaan Fitness and unlock your full potential with personalized training programs, state-of-the-art equipment, and a supportive community.",
+      "Join Rayhaan Fitness in the heart of Lalbag, Puran Dhaka — modern equipment, expert trainers, sauna & steam, and a community that pushes you further. Budget-friendly, hygienic, and built for results.",
     cta: "Get Started Today",
     secondaryCta: "Learn More",
   },
@@ -21,37 +31,37 @@ export const siteConfig = {
     {
       title: "Personal Training",
       description:
-        "One-on-one coaching tailored to your goals, fitness level, and schedule.",
+        "Friendly, expert trainers who guide you every step — from beginner to advanced.",
       icon: "BoltIcon",
     },
     {
       title: "Modern Equipment",
       description:
-        "Top-of-the-line machines and free weights for the most effective workouts.",
+        "Top-of-the-line machines, free weights, and the latest gym equipment for effective workouts.",
       icon: "WrenchScrewdriverIcon",
     },
     {
-      title: "Nutrition Guidance",
+      title: "Sauna & Steam",
       description:
-        "Custom meal plans and nutrition coaching to fuel your progress.",
+        "Unwind after your workout with our relaxing sauna and steam facilities — a member favourite.",
       icon: "HeartIcon",
     },
     {
       title: "Community Support",
       description:
-        "Train alongside motivated members who push you to be your best.",
+        "Train alongside motivated members in a clean, workout-friendly environment.",
       icon: "UserGroupIcon",
     },
     {
       title: "Flexible Scheduling",
       description:
-        "Open 24/7 with bookable sessions that fit your busy lifestyle.",
+        "Open daily from 6 AM (except Friday). Early mornings to late evenings, we fit your routine.",
       icon: "ClockIcon",
     },
     {
-      title: "Progress Tracking",
+      title: "Female Friendly",
       description:
-        "Track every rep, set, and milestone with our digital platform.",
+        "Dedicated 2-hour female hours plus yoga and zumba classes for our women members.",
       icon: "ChartBarIcon",
     },
   ],
@@ -72,10 +82,10 @@ export const siteConfig = {
       price: 59,
       period: "/month",
       features: [
-        "24/7 gym access",
+        "Gym access (6 AM - 10 PM)",
         "All equipment",
         "2 personal training sessions",
-        "Nutrition guide",
+        "Sauna & steam access",
         "Priority support",
       ],
       popular: true,
@@ -87,9 +97,9 @@ export const siteConfig = {
       features: [
         "Everything in Pro",
         "Unlimited personal training",
-        "Custom meal plans",
+        "Nutrition guide",
         "Recovery & massage",
-        "Exclusive events",
+        "Female hour & yoga access",
       ],
     },
   ],

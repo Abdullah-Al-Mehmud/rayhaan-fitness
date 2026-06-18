@@ -1,13 +1,23 @@
 import { HeroSection } from "@/components/HeroSection";
-import { Features } from "@/components/sections/features";
-import { CTA } from "@/components/sections/cta";
+import {
+  AboutSection,
+  BentoSection,
+  ContactSection,
+  Footer,
+  PackagesSection,
+  ReviewsSection,
+} from "@/components/sectioins";
 
 export default function Home() {
   return (
     <>
       <HeroSection />
-      <Features />
-      <CTA />
+      <AboutSection />
+      <BentoSection />
+      <PackagesSection />
+      <ReviewsSection />
+      <ContactSection />
+      <Footer />
     </>
   );
 }

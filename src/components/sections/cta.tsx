@@ -25,7 +25,7 @@ export function CTA() {
               Ready to Start Your Journey?
             </h2>
             <p className="mt-4 text-lg text-text-inverse/80 leading-relaxed">
-              Join thousands of members who have transformed their lives. Your
+              Visit us at 21/c Nur Fattah Lane, Lalbag — Ashiyana Tower. Your
               first session is free.
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-4">

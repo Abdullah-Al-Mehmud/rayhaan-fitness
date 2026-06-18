@@ -33,7 +33,7 @@ export function Features() {
         <SectionTitle
           label="Features"
           title="Everything You Need to Succeed"
-          subtitle="World-class facilities and expert guidance to help you reach your fitness goals faster than ever."
+          subtitle="Modern equipment, expert trainers, sauna & steam, and a welcoming community in the heart of Lalbag, Puran Dhaka since 2016."
         />
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
