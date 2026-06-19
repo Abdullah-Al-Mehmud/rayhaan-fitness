@@ -3,7 +3,17 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 // ─── Demo image placeholder helper ──────────────────────
-const Img = ({ src, alt, className, style }: { src: string; alt: string; className?: string; style?: React.CSSProperties }) => (
+const Img = ({
+  src,
+  alt,
+  className,
+  style,
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  style?: React.CSSProperties;
+}) => (
   <img
     src={src}
     alt={alt}
@@ -164,8 +174,18 @@ export function AboutSection() {
 
   return (
     <section
-      style={{ ...s.section, background: tokens.bgBase, padding: isMobile ? "64px 0" : "96px 0" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+      id="about"
+      style={{
+        ...s.section,
+        background: tokens.bgBase,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
         <div
           ref={ref}
           style={{
@@ -178,7 +198,11 @@ export function AboutSection() {
             transition: "opacity 0.8s ease, transform 0.8s ease",
           }}>
           {/* Left — image stack */}
-          <div style={{ position: "relative", height: isMobile ? 340 : isTablet ? 420 : 560 }}>
+          <div
+            style={{
+              position: "relative",
+              height: isMobile ? 340 : isTablet ? 420 : 560,
+            }}>
             {/* Main image */}
             <div
               style={{
@@ -304,7 +328,9 @@ export function AboutSection() {
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+                gridTemplateColumns: isMobile
+                  ? "repeat(2, 1fr)"
+                  : "repeat(4, 1fr)",
                 gap: 1,
                 marginBottom: 40,
                 background: tokens.borderSubtle,
@@ -344,10 +370,412 @@ export function AboutSection() {
             </div>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <button style={{ ...s.goldBtn, width: isMobile ? "100%" : "auto" }}>My Story</button>
-              <button style={{ ...s.outlineBtn, width: isMobile ? "100%" : "auto" }}>View Credentials</button>
+              <button
+                style={{ ...s.goldBtn, width: isMobile ? "100%" : "auto" }}>
+                My Story
+              </button>
+              <button
+                style={{ ...s.outlineBtn, width: isMobile ? "100%" : "auto" }}>
+                View Credentials
+              </button>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// COACH PROFILE SECTION
+// Distinct from "About" — that's brand philosophy; this is the
+// person. Credentials, a personal quote, action shot, and a
+// quick certification strip for instant credibility.
+// ═══════════════════════════════════════════════════════════
+export function CoachProfileSection() {
+  const [ref, inView] = useInView("-60px");
+  const { isMobile } = useResponsive();
+
+  const credentials = [
+    { label: "NASM Certified", sub: "Personal Trainer" },
+    { label: "Pn1 Nutrition", sub: "Coach Certification" },
+    { label: "USAW Level 2", sub: "Strength & Conditioning" },
+    { label: "12 Years", sub: "Coaching Experience" },
+  ];
+
+  return (
+    <section
+      style={{
+        ...s.section,
+        background: tokens.bgBase,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "0.85fr 1.15fr",
+            gap: isMobile ? 40 : 72,
+            alignItems: "center",
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(32px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}>
+          {/* Left — portrait + action shot stack */}
+          <div style={{ position: "relative", height: isMobile ? 380 : 520 }}>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: isMobile ? "78%" : "82%",
+                height: isMobile ? "82%" : "86%",
+                borderRadius: 18,
+                overflow: "hidden",
+                border: `1px solid ${tokens.borderSubtle}`,
+              }}>
+              <img
+                src={DEMO.coachPortrait}
+                alt="Coach Rayhaan"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: `linear-gradient(to top, ${tokens.bgBase}AA 0%, transparent 45%)`,
+                }}
+              />
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: isMobile ? "44%" : "42%",
+                height: isMobile ? "44%" : "42%",
+                borderRadius: 16,
+                overflow: "hidden",
+                border: `2px solid ${tokens.goldMuted}`,
+              }}>
+              <img
+                src={DEMO.coachAction}
+                alt="Coaching session"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            </div>
+            {/* Floating credential badge */}
+            <div
+              style={{
+                position: "absolute",
+                top: 24,
+                right: isMobile ? 8 : -8,
+                background: tokens.bgSurface,
+                border: `1px solid ${tokens.borderSubtle}`,
+                borderRadius: 12,
+                padding: "12px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+              }}>
+              <div
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: tokens.goldMid,
+                  flexShrink: 0,
+                }}
+              />
+              <div>
+                <div
+                  style={{
+                    fontSize: "0.78rem",
+                    fontWeight: 700,
+                    color: tokens.textPrimary,
+                    lineHeight: 1,
+                  }}>
+                  NASM-CPT
+                </div>
+                <div
+                  style={{
+                    fontSize: "0.58rem",
+                    color: tokens.textMuted,
+                    marginTop: 3,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                  }}>
+                  Verified
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right — content */}
+          <div>
+            <span style={s.label}>Meet Your Coach</span>
+            <h2 style={s.heading}>Rayhaan Ahmed</h2>
+            <p
+              style={{
+                fontSize: "0.95rem",
+                color: tokens.goldMid,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                marginTop: 8,
+                marginBottom: 24,
+              }}>
+              Founder & Lead Coach
+            </p>
+
+            {/* Philosophy quote */}
+            <div
+              style={{
+                borderLeft: `2px solid ${tokens.goldMuted}`,
+                paddingLeft: 20,
+                marginBottom: 28,
+              }}>
+              <p
+                style={{
+                  fontSize: "1.05rem",
+                  color: tokens.textPrimary,
+                  fontStyle: "italic",
+                  lineHeight: 1.65,
+                  margin: 0,
+                }}>
+                "I don't coach bodies. I coach the decision to keep showing up
+                when motivation runs out."
+              </p>
+            </div>
+
+            <p style={{ ...s.sub, marginBottom: 36, maxWidth: 480 }}>
+              Twelve years in the trenches — as an athlete first, then as a
+              coach. Rayhaan has guided over 3,000 people through
+              transformations that started with one honest conversation about
+              what wasn't working.
+            </p>
+
+            {/* Credential grid */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)",
+                gap: 12,
+                marginBottom: 36,
+              }}>
+              {credentials.map((c, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: tokens.bgSurface,
+                    border: `1px solid ${tokens.borderSubtle}`,
+                    borderRadius: 12,
+                    padding: "14px 14px",
+                  }}>
+                  <div
+                    style={{
+                      fontSize: "0.8rem",
+                      fontWeight: 700,
+                      color: tokens.goldLight,
+                      lineHeight: 1.2,
+                    }}>
+                    {c.label}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.62rem",
+                      color: tokens.textMuted,
+                      marginTop: 4,
+                      lineHeight: 1.4,
+                    }}>
+                    {c.sub}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+              <button style={s.goldBtn}>Book a Call</button>
+              <button style={s.outlineBtn}>Full Bio →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// INSTAGRAM FEED SECTION
+// Live-feel grid signaling active coaching, not a static brand.
+// Hover reveals engagement stats over each tile, like + comment
+// counts, mimicking a real social embed without an API call.
+// ═══════════════════════════════════════════════════════════
+export function InstagramFeedSection() {
+  const [ref, inView] = useInView("-60px");
+  const [hovered, setHovered] = useState(null);
+  const { isMobile, isTablet } = useResponsive();
+
+  const posts = [
+    { src: DEMO.insta1, likes: "1.2K", comments: 48 },
+    { src: DEMO.insta2, likes: "894", comments: 31 },
+    { src: DEMO.insta3, likes: "2.1K", comments: 76 },
+    { src: DEMO.insta4, likes: "763", comments: 22 },
+    { src: DEMO.insta5, likes: "1.5K", comments: 54 },
+    { src: DEMO.insta6, likes: "988", comments: 39 },
+  ];
+
+  const cols = isMobile ? 3 : isTablet ? 4 : 6;
+
+  return (
+    <section style={{ ...s.section, padding: isMobile ? "56px 0" : "80px 0" }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
+        {/* Header row — label left, handle/CTA right */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            justifyContent: "space-between",
+            alignItems: isMobile ? "flex-start" : "flex-end",
+            gap: 16,
+            marginBottom: 32,
+          }}>
+          <div>
+            <span style={s.label}>Follow the Journey</span>
+            <h2
+              style={{ ...s.heading, fontSize: "clamp(1.6rem, 3vw, 2.25rem)" }}>
+              Daily Proof,{" "}
+              <span style={{ color: tokens.goldLight }}>Not Just Promises</span>
+            </h2>
+          </div>
+          <a
+            href="#"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              color: tokens.goldMid,
+              textDecoration: "none",
+              fontSize: "0.85rem",
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+            }}>
+            @rayhaanfitness
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path
+                d="M3 11L11 3M11 3H5M11 3V9"
+                stroke={tokens.goldMid}
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+
+        {/* Grid */}
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${cols}, 1fr)`,
+            gap: isMobile ? 6 : 10,
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(24px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}>
+          {posts.map((p, i) => {
+            const isHov = hovered === i;
+            return (
+              <div
+                key={i}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+                style={{
+                  position: "relative",
+                  aspectRatio: "1 / 1",
+                  overflow: "hidden",
+                  borderRadius: 10,
+                  cursor: "pointer",
+                  border: `1px solid ${tokens.borderSubtle}`,
+                }}>
+                <img
+                  src={p.src}
+                  alt="Instagram post"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    transition: "transform 0.5s ease",
+                    transform: isHov ? "scale(1.07)" : "scale(1)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    background: `${tokens.bgBase}AA`,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: isMobile ? 10 : 18,
+                    opacity: isHov ? 1 : 0,
+                    transition: "opacity 0.25s ease",
+                  }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      color: tokens.textPrimary,
+                      fontSize: isMobile ? "0.7rem" : "0.85rem",
+                      fontWeight: 700,
+                    }}>
+                    <svg
+                      width={isMobile ? 12 : 14}
+                      height={isMobile ? 12 : 14}
+                      viewBox="0 0 16 16"
+                      fill={tokens.goldLight}>
+                      <path d="M8 14s-5.5-3.4-7-7.2C-0.2 3.6 1.6 1 4.4 1c1.5 0 2.7.8 3.6 2 0.9-1.2 2.1-2 3.6-2 2.8 0 4.6 2.6 3.4 5.8C13.5 10.6 8 14 8 14z" />
+                    </svg>
+                    {p.likes}
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      color: tokens.textPrimary,
+                      fontSize: isMobile ? "0.7rem" : "0.85rem",
+                      fontWeight: 700,
+                    }}>
+                    <svg
+                      width={isMobile ? 12 : 14}
+                      height={isMobile ? 12 : 14}
+                      viewBox="0 0 16 16"
+                      fill="none">
+                      <path
+                        d="M1 7.5C1 4 4 1.5 8 1.5s7 2.5 7 6-3 6-7 6c-.8 0-1.6-.1-2.3-.3L2 14l1.1-2.8C1.8 10.2 1 9 1 7.5z"
+                        stroke={tokens.goldLight}
+                        strokeWidth="1.4"
+                      />
+                    </svg>
+                    {p.comments}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -432,19 +860,38 @@ export function BentoSection() {
   const bentoGrid = isMobile
     ? { gridTemplateColumns: "1fr", gridTemplateRows: "repeat(7, auto)" }
     : isTablet
-      ? { gridTemplateColumns: "repeat(2, 1fr)", gridTemplateRows: "200px 200px 180px 180px" }
-      : { gridTemplateColumns: "repeat(3, 1fr)", gridTemplateRows: "200px 180px 180px" };
+      ? {
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gridTemplateRows: "200px 200px 180px 220px",
+        }
+      : {
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gridTemplateRows: "200px 180px 220px",
+        };
 
-  const cellSpan = (cell: typeof cells[0]) => {
+  const cellSpan = (cell: (typeof cells)[0]) => {
     if (isMobile) {
-      return { gridColumn: cell.mobileCol ?? "1 / 2", gridRow: cell.mobileRow ?? "auto" };
+      return {
+        gridColumn: cell.mobileCol ?? "1 / 2",
+        gridRow: cell.mobileRow ?? "auto",
+      };
     }
     return { gridColumn: cell.col, gridRow: cell.row };
   };
 
   return (
-    <section style={{ ...s.section, padding: isMobile ? "64px 0" : "96px 0", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+    <section
+      style={{
+        ...s.section,
+        background: tokens.bgBase,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
         <div style={{ textAlign: "center", marginBottom: isMobile ? 40 : 56 }}>
           <span style={s.label}>Inside the Arena</span>
           <h2 style={s.heading}>
@@ -456,6 +903,7 @@ export function BentoSection() {
 
         <div
           ref={ref}
+          className="md:px-10"
           style={{
             display: "grid",
             ...bentoGrid,
@@ -612,52 +1060,63 @@ export function BentoSection() {
             );
           })}
 
-          {/* 7th decorative cell — count tile */}
+          {/* Full-width bottom image */}
           <div
             style={{
-              gridColumn: isMobile ? "1 / 2" : isTablet ? "2 / 3" : "3 / 4",
+              gridColumn: isMobile ? "1 / 2" : isTablet ? "1 / 3" : "1 / 4",
               gridRow: isMobile ? "7 / 8" : isTablet ? "4 / 5" : "3 / 4",
               borderRadius: 12,
+              overflow: "hidden",
+              position: "relative",
               border: `1px solid ${tokens.borderSubtle}`,
-              background: tokens.bgWarm,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-              minHeight: isMobile ? 160 : "auto",
+              minHeight: isMobile ? 200 : 220,
             }}>
+            <img
+              src={DEMO.gym1}
+              alt="Training facility"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            />
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: "50%",
-                border: `1.5px solid ${tokens.goldMid}`,
+                position: "absolute",
+                inset: 0,
+                background: `linear-gradient(to right, ${tokens.bgBase}CC, transparent 50%)`,
+              }}
+            />
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
                 display: "flex",
-                alignItems: "center",
+                flexDirection: "column",
                 justifyContent: "center",
+                padding: "0 32px",
               }}>
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path
-                  d="M9 3v12M3 9h12"
-                  stroke={tokens.goldMid}
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <div
-              style={{
-                fontSize: "0.6rem",
-                letterSpacing: "0.22em",
-                textTransform: "uppercase",
-                color: tokens.textMuted,
-                textAlign: "center",
-                lineHeight: 1.6,
-              }}>
-              6 Training
-              <br />
-              Disciplines
+              <span
+                style={{
+                  fontSize: "0.6rem",
+                  letterSpacing: "0.22em",
+                  textTransform: "uppercase",
+                  color: tokens.goldMid,
+                  fontWeight: 700,
+                }}>
+                6 Training Disciplines
+              </span>
+              <span
+                style={{
+                  fontSize: "1.15rem",
+                  fontWeight: 800,
+                  color: tokens.textPrimary,
+                  lineHeight: 1.15,
+                  marginTop: 6,
+                }}>
+                One System
+              </span>
             </div>
           </div>
         </div>
@@ -747,8 +1206,18 @@ export function PackagesSection() {
 
   return (
     <section
-      style={{ ...s.section, background: tokens.bgBase, padding: isMobile ? "64px 0" : "96px 0" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+      id="packages"
+      style={{
+        ...s.section,
+        background: tokens.bgBase,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
         <div style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
           <span style={s.label}>Investment</span>
           <h2 style={s.heading}>
@@ -766,7 +1235,11 @@ export function PackagesSection() {
           ref={ref}
           style={{
             display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : isTablet ? "repeat(2, 1fr)" : "repeat(3, 1fr)",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : isTablet
+                ? "repeat(2, 1fr)"
+                : "repeat(3, 1fr)",
             gap: 20,
             opacity: inView ? 1 : 0,
             transform: inView ? "none" : "translateY(36px)",
@@ -1001,12 +1474,17 @@ export function PackagesSection() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// 4. REVIEWS SECTION
+// 4. REVIEWS SECTION — Vertical Ghost Drift
+// Three columns of testimonial cards drift continuously:
+// col 1 ↑, col 2 ↓, col 3 ↑ (slower). Cards are fully readable
+// at rest with a soft "ghosty" haze (slight blur, near-full
+// opacity). Hovering anywhere on the wall simply pauses the
+// drift — no per-card focus effect, no extra opacity drop.
 // ═══════════════════════════════════════════════════════════
 export function ReviewsSection() {
   const [ref, inView] = useInView("-40px");
-  const [active, setActive] = useState(0);
-  const { isMobile, isTablet } = useResponsive();
+  const [paused, setPaused] = useState(false);
+  const { isMobile } = useResponsive();
 
   const reviews = [
     {
@@ -1014,16 +1492,14 @@ export function ReviewsSection() {
       role: "Lost 18kg in 5 months",
       avatar: DEMO.r1,
       stars: 5,
-      quote:
-        "I'd failed with four coaches before Rayhaan. What changed? He actually listened. The program didn't feel like a template — it felt like it was built for my schedule, my body, my weak points. Six months in, I ran my first 10K.",
+      quote: "He actually listened. Six months in, I ran my first 10K.",
     },
     {
       name: "Priya Sharma",
       role: "Gained 6kg muscle mass",
       avatar: DEMO.r2,
       stars: 5,
-      quote:
-        "As a woman, I was scared of heavy lifting. Rayhaan broke that fear in week one. The form coaching is obsessive in the best way. I now deadlift twice my bodyweight and I'm proud of every inch of it.",
+      quote: "I now deadlift twice my bodyweight, and I'm proud of it.",
     },
     {
       name: "James Whitfield",
@@ -1031,7 +1507,7 @@ export function ReviewsSection() {
       avatar: DEMO.r3,
       stars: 5,
       quote:
-        "The mental conditioning side is what separates Rayhaan from every other coach I've had. Training for a marathon isn't just physical — and he gets that. My PR dropped by 22 minutes.",
+        "My marathon PR dropped by 22 minutes. He gets the mental side too.",
     },
     {
       name: "Nadia Okonkwo",
@@ -1039,15 +1515,166 @@ export function ReviewsSection() {
       avatar: DEMO.r4,
       stars: 5,
       quote:
-        "Returning to training after two kids felt impossible. Rayhaan designed a phased program that respected my body's timeline, not a generic plan. I'm in the best shape of my adult life at 34.",
+        "Best shape of my adult life at 34 — and it actually respected my body.",
+    },
+    {
+      name: "Farid Hossain",
+      role: "Strength plateau broken",
+      avatar: DEMO.r1,
+      stars: 5,
+      quote: "Stuck for two years. Three months with Rayhaan, +25kg on my max.",
+    },
+    {
+      name: "Sana Malik",
+      role: "First competition prep",
+      avatar: DEMO.r2,
+      stars: 5,
+      quote: "He managed my nerves and my routine, not just my training.",
     },
   ];
 
-  const r = reviews[active];
+  // Three columns, two cards each — short and uncluttered
+  const col1 = [reviews[0], reviews[3]];
+  const col2 = [reviews[1], reviews[4]];
+  const col3 = [reviews[2], reviews[5]];
+
+  const Stars = ({ n }) => (
+    <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
+      {Array.from({ length: n }).map((_, i) => (
+        <svg
+          key={i}
+          width="12"
+          height="12"
+          viewBox="0 0 16 16"
+          fill={tokens.goldMid}>
+          <path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.3l-3.7 2.1.7-4.1-3-2.9 4.2-.8z" />
+        </svg>
+      ))}
+    </div>
+  );
+
+  const Card = ({ r }) => (
+    <div
+      style={{
+        background: tokens.bgSurface,
+        border: `1px solid ${tokens.borderSubtle}`,
+        borderRadius: 16,
+        padding: "24px 22px",
+      }}>
+      <Stars n={r.stars} />
+      <p
+        style={{
+          fontSize: "0.84rem",
+          color: tokens.textPrimary,
+          lineHeight: 1.6,
+          fontStyle: "italic",
+          margin: "0 0 16px",
+        }}>
+        "{r.quote}"
+      </p>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: "50%",
+            overflow: "hidden",
+            flexShrink: 0,
+            border: `1px solid ${tokens.goldMuted}`,
+          }}>
+          <Img
+            src={r.avatar}
+            alt={r.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+        <div>
+          <div
+            style={{
+              fontWeight: 700,
+              color: tokens.textPrimary,
+              fontSize: "0.78rem",
+            }}>
+            {r.name}
+          </div>
+          <div
+            style={{
+              fontSize: "0.6rem",
+              letterSpacing: "0.13em",
+              textTransform: "uppercase",
+              color: tokens.goldMid,
+              marginTop: 2,
+            }}>
+            {r.role}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Each column renders its set TWICE stacked for a seamless loop,
+  // then slides translateY(0) → translateY(-50%) (or the reverse).
+  const Column = ({ items, direction, duration }) => (
+    <div
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        height: isMobile ? 360 : 460,
+        flex: 1,
+        WebkitMaskImage:
+          "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+        maskImage:
+          "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)",
+      }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 18,
+          width: "100%",
+          animationName:
+            direction === "up" ? "ghostScrollUp" : "ghostScrollDown",
+          animationDuration: `${duration}s`,
+          animationTimingFunction: "linear",
+          animationIterationCount: "infinite",
+          animationPlayState: paused ? "paused" : "running",
+        }}>
+        {[...items, ...items].map((r, i) => (
+          <Card r={r} key={i} />
+        ))}
+      </div>
+    </div>
+  );
 
   return (
-    <section style={{ ...s.section, padding: isMobile ? "64px 0" : "96px 0", overflow: "hidden" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+    <section
+      id="review"
+      style={{
+        ...s.section,
+        padding: isMobile ? "64px 0" : "96px 0",
+        overflow: "hidden",
+        filter: "blur(0.4px)",
+      }}>
+      <style>{`
+        @keyframes ghostScrollUp {
+          from { transform: translateY(0); }
+          to { transform: translateY(-50%); }
+        }
+        @keyframes ghostScrollDown {
+          from { transform: translateY(-50%); }
+          to { transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ghost-wall [style*="animation-name"] { animation: none !important; }
+        }
+      `}</style>
+
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 28 : 96}px`,
+        }}>
         <div style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
           <span style={s.label}>Testimonials</span>
           <h2 style={s.heading}>
@@ -1055,184 +1682,25 @@ export function ReviewsSection() {
             <br />
             <span style={{ color: tokens.goldLight }}>Speak First</span>
           </h2>
+          <p style={{ ...s.sub, maxWidth: 460, margin: "16px auto 0" }}>
+            Hover anywhere on the wall to pause the drift.
+          </p>
         </div>
 
         <div
           ref={ref}
+          className="ghost-wall"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
           style={{
-            opacity: inView ? 1 : 0,
-            transform: inView ? "none" : "translateY(28px)",
-            transition: "all 0.8s ease",
-          }}>
-          {/* Large featured quote */}
-          <div
-            style={{
-              background: tokens.bgSurface,
-              border: `1px solid ${tokens.borderSubtle}`,
-              borderRadius: 24,
-              padding: isMobile ? "32px 24px" : isTablet ? "40px 36px" : "56px 64px",
-              marginBottom: 24,
-              position: "relative",
-              overflow: "hidden",
-            }}>
-            {/* Decorative quote mark */}
-            <div
-              style={{
-                position: "absolute",
-                top: isMobile ? 8 : 24,
-                right: isMobile ? 24 : 48,
-                fontSize: isMobile ? "4rem" : "8rem",
-                fontWeight: 900,
-                color: `${tokens.goldMuted}18`,
-                lineHeight: 1,
-                userSelect: "none",
-                fontFamily: "Georgia, serif",
-              }}>
-              "
-            </div>
-
-            <div style={{
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              gap: isMobile ? 20 : isTablet ? 28 : 48,
-              alignItems: isMobile ? "center" : "flex-start",
-              textAlign: isMobile ? "center" : "left",
-            }}>
-              {/* Avatar */}
-              <div style={{ flexShrink: 0 }}>
-                <div
-                  style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    border: `2px solid ${tokens.goldMuted}`,
-                  }}>
-                  <Img
-                    src={r.avatar}
-                    alt={r.name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Content */}
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", gap: 2, marginBottom: 20 }}>
-                  {Array.from({ length: r.stars }).map((_, i) => (
-                    <svg
-                      key={i}
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill={tokens.goldMid}>
-                      <path d="M8 1l1.8 3.6L14 5.4l-3 2.9.7 4.1L8 10.3l-3.7 2.1.7-4.1-3-2.9 4.2-.8z" />
-                    </svg>
-                  ))}
-                </div>
-                <p
-                  style={{
-                    fontSize: "1.15rem",
-                    color: tokens.textPrimary,
-                    lineHeight: 1.75,
-                    fontStyle: "italic",
-                    marginBottom: 28,
-                    maxWidth: 680,
-                  }}>
-                  "{r.quote}"
-                </p>
-                <div>
-                  <div
-                    style={{
-                      fontWeight: 700,
-                      color: tokens.textPrimary,
-                      fontSize: "0.95rem",
-                    }}>
-                    {r.name}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.72rem",
-                      letterSpacing: "0.2em",
-                      textTransform: "uppercase",
-                      color: tokens.goldMid,
-                      marginTop: 4,
-                    }}>
-                    {r.role}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Selector pills */}
-          <div style={{
             display: "flex",
-            flexWrap: isMobile ? "wrap" : "nowrap",
-            gap: 10,
+            gap: isMobile ? 14 : 24,
+            opacity: inView ? 1 : 0,
+            transition: "opacity 0.9s ease",
           }}>
-            {reviews.map((rv, i) => (
-              <button
-                key={i}
-                onClick={() => setActive(i)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  padding: isMobile ? "8px 12px" : "10px 16px",
-                  borderRadius: 12,
-                  border: `1px solid ${active === i ? tokens.borderDefault : tokens.borderSubtle}`,
-                  background:
-                    active === i ? `${tokens.goldMid}15` : tokens.bgSurface,
-                  cursor: "pointer",
-                  transition: "all 0.25s",
-                  flex: isMobile ? "1 1 calc(50% - 5px)" : 1,
-                  minWidth: 0,
-                }}>
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "50%",
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}>
-                  <Img
-                    src={rv.avatar}
-                    alt={rv.name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <div style={{ textAlign: "left" }}>
-                  <div
-                    style={{
-                      fontSize: "0.78rem",
-                      fontWeight: 600,
-                      color:
-                        active === i ? tokens.goldLight : tokens.textPrimary,
-                    }}>
-                    {rv.name}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.62rem",
-                      color: tokens.textMuted,
-                      marginTop: 2,
-                    }}>
-                    {rv.role}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
+          <Column items={col1} direction="up" duration={22} />
+          <Column items={col2} direction="down" duration={26} />
+          {!isMobile && <Column items={col3} direction="up" duration={30} />}
         </div>
       </div>
     </section>
@@ -1254,8 +1722,11 @@ export function ContactSection() {
   });
   const [sent, setSent] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => setForm({ ...form, [e.target.name]: e.target.value });
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSent(true);
@@ -1276,7 +1747,11 @@ export function ContactSection() {
   };
 
   const contactInfo = [
-    { icon: "📍", label: "Location", value: "21/c Nur Fattah Lane, Dhaka 1211 — Ashiyana Tower" },
+    {
+      icon: "📍",
+      label: "Location",
+      value: "21/c Nur Fattah Lane, Dhaka 1211 — Ashiyana Tower",
+    },
     { icon: "📞", label: "Phone", value: "02-55155028" },
     { icon: "⏰", label: "Hours", value: "Opens 6 AM daily · Closed Friday" },
     { icon: "⭐", label: "Rating", value: "4.6 ★ from 1,002 reviews" },
@@ -1284,8 +1759,18 @@ export function ContactSection() {
 
   return (
     <section
-      style={{ ...s.section, background: tokens.bgBase, padding: isMobile ? "64px 0" : "96px 0" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+      id="contact"
+      style={{
+        ...s.section,
+        background: tokens.bgBase,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
         <div
           ref={ref}
           style={{
@@ -1608,7 +2093,7 @@ export function Footer() {
   };
 
   const footerGridCols = isMobile
-    ? "1fr"
+    ? "1fr 1fr"
     : isTablet
       ? "1.5fr 1fr 1fr"
       : "1.8fr 1fr 1fr 1fr";
@@ -1616,11 +2101,16 @@ export function Footer() {
   return (
     <footer
       style={{
+        ...s.section,
         background: tokens.bgBase,
-        borderTop: `1px solid ${tokens.borderSubtle}`,
-        padding: isMobile ? "48px 0 24px" : "72px 0 32px",
+        padding: isMobile ? "64px 0" : "96px 0",
       }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: `0 ${isMobile ? 20 : 32}px` }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
         {/* Top row */}
         <div
           style={{
@@ -1630,7 +2120,7 @@ export function Footer() {
             marginBottom: isMobile ? 40 : 64,
           }}>
           {/* Brand */}
-          <div>
+          <div style={isMobile ? { gridColumn: "1 / -1" } : {}}>
             <Image
               src="/logo.png"
               alt="Rayhaan Fitness"
@@ -1773,23 +2263,3 @@ export function Footer() {
     </footer>
   );
 }
-
-// ═══════════════════════════════════════════════════════════
-// MAIN EXPORT
-// ═══════════════════════════════════════════════════════════
-// export default function RayhaanSections() {
-//   return (
-//     <div
-//       style={{
-//         fontFamily: "var(--font-geist-sans, 'Inter', 'Segoe UI', sans-serif)",
-//         WebkitFontSmoothing: "antialiased",
-//       }}>
-//       <AboutSection />
-//       <BentoSection />
-//       <PackagesSection />
-//       <ReviewsSection />
-//       <ContactSection />
-//       <Footer />
-//     </div>
-//   );
-// }

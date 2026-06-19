@@ -12,6 +12,7 @@ export function Hero() {
 
   return (
     <section
+      id="home"
       ref={ref}
       className="relative min-h-screen flex items-center overflow-hidden bg-background-base"
     >

@@ -1,22 +1,16 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { Navbar } from "./Navbar";
-
+import { useEffect, useRef } from "react";
 gsap.registerPlugin(ScrollTrigger);
-
-const NAV_ITEMS = ["Home", "About Us", "Services", "Packages"];
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const primaryBtnRef = useRef<HTMLButtonElement>(null);
   const mobileBtnRef = useRef<HTMLButtonElement>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState("Home");
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -62,13 +56,7 @@ export function HeroSection() {
           ease: "power2.out",
         });
 
-        gsap.from(".mobile-stat-card", {
-          y: 24,
-          opacity: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          delay: 0.5,
-        });
+        // .mobile-stat-card is animated by Framer Motion — GSAP would race it
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
@@ -79,7 +67,6 @@ export function HeroSection() {
             ".hero-image-wrapper",
             ".mobile-gold-corner",
             ".hero-image-wrapper-mobile",
-            ".mobile-stat-card",
           ],
           { clearProps: "all" },
         );
@@ -106,14 +93,6 @@ export function HeroSection() {
 
     return () => ctx.revert();
   }, []);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileMenuOpen]);
 
   const handleBtnHover = (ref: React.RefObject<HTMLButtonElement | null>) => {
     if (ref.current) {
@@ -146,128 +125,6 @@ export function HeroSection() {
     <section
       ref={sectionRef}
       className="hero-section relative w-full min-h-screen flex flex-col lg:flex-row overflow-hidden bg-background-base">
-      {/* ── MOBILE FULL-SCREEN MENU OVERLAY ── */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            key="mobile-menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="lg:hidden fixed inset-0 z-[200] overflow-hidden"
-            style={{ background: "rgba(10,8,6,0.97)" }}>
-            {/* Diagonal gold slash — mirrors strip motif */}
-            <div
-              className="absolute -top-20 -right-24 w-64 h-[110vh] -skew-x-[20deg] pointer-events-none"
-              style={{ background: "var(--gold-mid)", opacity: 0.18 }}
-            />
-            <div
-              className="absolute -top-20 -right-8 w-20 h-[110vh] -skew-x-[20deg] pointer-events-none"
-              style={{ background: "var(--gold-mid)", opacity: 0.55 }}
-            />
-
-            {/* Close button */}
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close menu"
-              className="absolute top-5 right-6 z-10 w-10 h-10 flex items-center justify-center text-text-primary hover:text-gold-mid transition-colors duration-200">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                className="w-7 h-7">
-                <path strokeLinecap="round" d="M6 6l12 12M6 18L18 6" />
-              </svg>
-            </button>
-
-            {/* Logo inside menu */}
-            <div className="absolute top-5 left-6">
-              <Image
-                src="/logo.png"
-                alt="Rayhaan Fitness"
-                width={120}
-                height={38}
-                className="object-contain"
-                priority
-              />
-            </div>
-
-            {/* Nav links */}
-            <nav className="absolute inset-0 flex flex-col justify-center pl-10 gap-1">
-              <span
-                className="text-[0.6rem] tracking-[0.35em] uppercase mb-6"
-                style={{ color: "var(--gold-mid)", opacity: 0.7 }}>
-                Navigation
-              </span>
-              {NAV_ITEMS.map((item, i) => (
-                <motion.button
-                  key={item}
-                  initial={{ opacity: 0, x: -32 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.35, delay: 0.08 * i }}
-                  onClick={() => {
-                    setActiveNav(item);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="group text-left relative w-fit">
-                  {/* Index number */}
-                  <span
-                    className="absolute -left-6 top-1/2 -translate-y-1/2 text-[0.6rem] font-mono"
-                    style={{ color: "var(--gold-mid)", opacity: 0.5 }}>
-                    0{i + 1}
-                  </span>
-                  <span
-                    className={`block text-[2.6rem] sm:text-[3.2rem] font-bold leading-tight tracking-tight transition-colors duration-200 ${
-                      activeNav === item
-                        ? "text-transparent bg-clip-text"
-                        : "text-text-primary group-hover:text-transparent group-hover:bg-clip-text"
-                    }`}
-                    style={{
-                      WebkitTextStroke:
-                        activeNav === item
-                          ? "0px"
-                          : "1px rgba(255,255,255,0.15)",
-                      backgroundImage:
-                        "linear-gradient(135deg, var(--gold-light) 0%, var(--gold-mid) 100%)",
-                      WebkitBackgroundClip: "text",
-                      backgroundClip: "text",
-                    }}>
-                    {activeNav === item ? item : item}
-                  </span>
-                  {/* Active underline */}
-                  {activeNav === item && (
-                    <motion.div
-                      layoutId="mobile-nav-indicator"
-                      className="h-px w-full mt-0.5"
-                      style={{ background: "var(--gold-mid)" }}
-                    />
-                  )}
-                </motion.button>
-              ))}
-            </nav>
-
-            {/* Bottom social / CTA hint */}
-            <div className="absolute bottom-10 left-10 right-20 flex items-center justify-between">
-              <span className="text-text-muted text-xs tracking-widest uppercase">
-                Rayhaan Fitness
-              </span>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-xs font-semibold px-5 py-2.5 rounded-sm"
-                style={{
-                  background: "var(--gold-mid)",
-                  color: "var(--text-inverse)",
-                }}>
-                Start Training →
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* ── BOTTOM GRADIENT OVERLAYS ── */}
       <div
         className="absolute inset-x-0 bottom-0 w-full h-1/2 pointer-events-none z-40"
@@ -289,23 +146,16 @@ export function HeroSection() {
         className="absolute z-30 inset-0 overflow-hidden pointer-events-none select-none"
         aria-hidden="true">
         <span
-          className="ghost-text absolute top-[.4em] left-0 right-0 text-center lg:text-left lg:left-80 text-[clamp(6rem,20vw,18rem)] font-black leading-none text-white/5"
+          className="ghost-text absolute top-[20vh] lg:top-[.4em] left-0 right-0 text-center lg:text-left lg:left-80 text-[clamp(6rem,20vw,18rem)] font-black leading-none text-white/[0.08] lg:text-white/5"
           style={{
             maskImage:
-              "linear-gradient(to bottom, white 0%, white 20%, transparent 55%)",
+              "linear-gradient(to bottom, white 0%, white 30%, transparent 65%)",
             WebkitMaskImage:
-              "linear-gradient(to bottom, white 0%, white 20%, transparent 55%)",
+              "linear-gradient(to bottom, white 0%, white 30%, transparent 65%)",
           }}>
           FITNESS
         </span>
       </div>
-
-      <Navbar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        setMobileMenuOpen={setMobileMenuOpen}
-        navItems={NAV_ITEMS}
-      />
 
       {/* ========== LEFT CONTENT PANEL ========== */}
       <div className="relative z-10 w-full lg:w-[40%] flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:pl-36 lg:pr-12 xl:pl-44 xl:pr-16 pt-10 pb-8 lg:pb-0 lg:pt-32 order-2 lg:order-1">
