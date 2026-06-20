@@ -23,6 +23,8 @@ const Img = ({
 );
 
 const DEMO = {
+  coachPortrait:
+    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
   trainer:
     "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
   gym1: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
@@ -35,6 +37,20 @@ const DEMO = {
   r2: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
   r3: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
   r4: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
+  coachAction:
+    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
+  insta1:
+    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80",
+  insta2:
+    "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400&q=80",
+  insta3:
+    "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=400&q=80",
+  insta4:
+    "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&q=80",
+  insta5:
+    "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&q=80",
+  insta6:
+    "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80",
 };
 
 // ─── Shared tokens ────────────────────────────────────────
@@ -618,7 +634,7 @@ export function CoachProfileSection() {
 // ═══════════════════════════════════════════════════════════
 export function InstagramFeedSection() {
   const [ref, inView] = useInView("-60px");
-  const [hovered, setHovered] = useState(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   const { isMobile, isTablet } = useResponsive();
 
   const posts = [
@@ -1538,7 +1554,7 @@ export function ReviewsSection() {
   const col2 = [reviews[1], reviews[4]];
   const col3 = [reviews[2], reviews[5]];
 
-  const Stars = ({ n }) => (
+  const Stars = ({ n }: { n: number }) => (
     <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
       {Array.from({ length: n }).map((_, i) => (
         <svg
@@ -1553,7 +1569,7 @@ export function ReviewsSection() {
     </div>
   );
 
-  const Card = ({ r }) => (
+  const Card = ({ r }: { r: { name: string; role: string; avatar: string; stars: number; quote: string } }) => (
     <div
       style={{
         background: tokens.bgSurface,
@@ -1614,7 +1630,7 @@ export function ReviewsSection() {
 
   // Each column renders its set TWICE stacked for a seamless loop,
   // then slides translateY(0) → translateY(-50%) (or the reverse).
-  const Column = ({ items, direction, duration }) => (
+  const Column = ({ items, direction, duration }: { items: { name: string; role: string; avatar: string; stars: number; quote: string }[]; direction: string; duration: number }) => (
     <div
       style={{
         position: "relative",
