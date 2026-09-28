@@ -6,10 +6,91 @@ import { getGymTourWhatsAppUrl } from "@/data/gymData";
 import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const INITIAL_DISPLAY_COUNT = 8;
 const LOAD_MORE_INCREMENT = 8;
+
+// ── Memoized card: local load state so one image loading never re-renders the grid ──
+const GalleryCard = React.memo(function GalleryCard({
+  item,
+  index,
+  isNew,
+  staggerIndex,
+  onOpen,
+}: {
+  item: GalleryItem;
+  index: number;
+  isNew: boolean;
+  staggerIndex: number;
+  onOpen: (index: number) => void;
+}) {
+  const [loaded, setLoaded] = useState(false);
+
+  return (
+    <motion.div
+      key={item.id}
+      initial={isNew ? { opacity: 0, y: 24 } : false}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        duration: 0.35,
+        ease: "easeOut",
+        delay: isNew ? Math.min(staggerIndex * 0.05, 0.3) : 0,
+      }}
+      className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#0F0D0A] border border-[#3D3528] cursor-pointer shadow-md hover:border-[#D4A843]/70 hover:shadow-[0_12px_36px_rgba(212,168,67,0.22)] transition-colors duration-300"
+      onClick={() => onOpen(index)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen(index);
+        }
+      }}
+      aria-label={`View photo ${index + 1}`}
+    >
+      {/* Reserved skeleton (same size, no layout shift) fades out */}
+      <div
+        className={`absolute inset-0 bg-[#2E2A22] transition-opacity duration-500 ${
+          loaded ? "opacity-0" : "opacity-100 animate-pulse"
+        }`}
+        aria-hidden="true"
+      />
+
+      <Image
+        src={item.imageSrc}
+        alt={item.alt}
+        fill
+        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+        loading={index < INITIAL_DISPLAY_COUNT ? "eager" : "lazy"}
+        decoding="async"
+        onLoad={() => setLoaded(true)}
+        className={`object-cover transition-opacity duration-500 ease-out group-hover:scale-105 ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      {/* Clean, minimal hover overlay with centered magnifying view icon */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[#0F0D0A]/35 backdrop-blur-[2px] z-20">
+        <div className="w-12 h-12 rounded-full bg-[#0F0D0A]/90 border border-[#D4A843] text-[#E8C060] flex items-center justify-center shadow-xl scale-75 group-hover:scale-100 transition-transform duration-300">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2.2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0zM11 8v6M8 11h6"
+            />
+          </svg>
+        </div>
+      </div>
+    </motion.div>
+  );
+});
 
 export function GallerySection() {
   const { selectedBranch } = useBranch();
@@ -17,7 +98,8 @@ export function GallerySection() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  // Tracks which batch is "new" so only freshly revealed cards animate in.
+  const prevCountRef = useRef(INITIAL_DISPLAY_COUNT);
 
   // Display items sliced for pagination
   const displayedItems = useMemo(() => {
@@ -26,20 +108,35 @@ export function GallerySection() {
 
   const hasMore = visibleCount < GALLERY_ITEMS.length;
 
-  const handleLoadMore = () => {
-    trackEvent("gallery_load_more_click", {
-      currentCount: visibleCount,
-      totalCount: GALLERY_ITEMS.length,
+  // Silently preload the next batch so "Explore more" reveals instantly
+  // instead of flashing skeletons while images download.
+  useEffect(() => {
+    const nextBatch = GALLERY_ITEMS.slice(
+      visibleCount,
+      visibleCount + LOAD_MORE_INCREMENT
+    );
+    nextBatch.forEach((item) => {
+      const img = new window.Image();
+      img.decoding = "async";
+      img.src = item.imageSrc;
     });
-    setVisibleCount((prev) => Math.min(prev + LOAD_MORE_INCREMENT, GALLERY_ITEMS.length));
-  };
+  }, [visibleCount]);
 
-  const openLightbox = (index: number) => {
+  const openLightbox = useCallback((index: number) => {
     trackEvent("gallery_image_view", {
       itemId: GALLERY_ITEMS[index]?.id,
       index,
     });
     setLightboxIndex(index);
+  }, []);
+
+  const handleLoadMore = () => {
+    trackEvent("gallery_load_more_click", {
+      currentCount: visibleCount,
+      totalCount: GALLERY_ITEMS.length,
+    });
+    prevCountRef.current = visibleCount;
+    setVisibleCount((prev) => Math.min(prev + LOAD_MORE_INCREMENT, GALLERY_ITEMS.length));
   };
 
   const closeLightbox = useCallback(() => {
@@ -143,85 +240,24 @@ export function GallerySection() {
           </p>
         </div>
 
-        {/* ── Uniform Grid Layout (Clean one-size cards, no text clutter) ── */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"
-        >
-          <AnimatePresence mode="popLayout">
-            {displayedItems.map((item, index) => {
-              const isLoaded = loadedImages[item.id];
-
-              return (
-                <motion.div
-                  layout
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.94, y: 20 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.94, y: 20 }}
-                  transition={{
-                    duration: 0.4,
-                    ease: [0.22, 1, 0.36, 1],
-                    delay: (index % 8) * 0.04,
-                  }}
-                  className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#0F0D0A] border border-[#3D3528] cursor-pointer shadow-md hover:border-[#D4A843]/70 hover:shadow-[0_12px_36px_rgba(212,168,67,0.22)] transition-all duration-500"
-                  onClick={() => openLightbox(index)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      openLightbox(index);
-                    }
-                  }}
-                  aria-label={`View photo ${index + 1}`}
-                >
-                  {/* Tailwind skeleton shimmer until loaded */}
-                  {!isLoaded && (
-                    <div className="absolute inset-0 bg-[#2E2A22] animate-pulse z-10">
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#3D3528]/40 to-transparent -translate-x-full animate-[shimmer_1.8s_infinite]" />
-                    </div>
-                  )}
-
-                  {/* WebP Next.js Image with exact uniform aspect ratio */}
-                  <Image
-                    src={item.imageSrc}
-                    alt={item.alt}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    loading="lazy"
-                    decoding="async"
-                    onLoad={() =>
-                      setLoadedImages((prev) => ({ ...prev, [item.id]: true }))
-                    }
-                    className={`object-cover transition-transform duration-700 ease-out group-hover:scale-108 ${
-                      isLoaded ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-
-                  {/* Clean, minimal hover overlay with centered magnifying view icon */}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 bg-[#0F0D0A]/35 backdrop-blur-[2px] z-20">
-                    <div className="w-12 h-12 rounded-full bg-[#0F0D0A]/90 border border-[#D4A843] text-[#E8C060] flex items-center justify-center shadow-xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M21 21l-4.35-4.35M17 11a6 6 0 11-12 0 6 6 0 0112 0zM11 8v6M8 11h6"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-        </motion.div>
+        {/* ── Uniform Grid (no layout animations — existing cards never re-animate) ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+          {displayedItems.map((item, index) => {
+            const isNew =
+              visibleCount > INITIAL_DISPLAY_COUNT &&
+              index >= prevCountRef.current;
+            return (
+              <GalleryCard
+                key={item.id}
+                item={item}
+                index={index}
+                isNew={isNew}
+                staggerIndex={isNew ? index - prevCountRef.current : 0}
+                onOpen={openLightbox}
+              />
+            );
+          })}
+        </div>
 
         {/* ── Load More Button / Completion State ──────────────────── */}
         <div className="mt-12 sm:mt-16 text-center">
