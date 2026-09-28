@@ -14,6 +14,7 @@ import {
   PackagesSection,
   ReviewsSection,
 } from "@/components/sectioins";
+import { GallerySection } from "@/components/GallerySection";
 import ProgramsSection from "@/components/sections/programmSection";
 
 export default function Home() {
@@ -28,6 +29,7 @@ export default function Home() {
       <OutletLocationsSection />
       <PackagesSection />
       <ProgramsSection />
+      <GallerySection />
       <ReviewsSection />
       <FAQSection />
       <ContactSection />

@@ -42,34 +42,25 @@ const Img = ({
 );
 
 const DEMO = {
-  trainer:
-    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
-  gym1: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
-  gym2: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=800&q=80",
-  gym3: "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=800&q=80",
-  gym4: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80",
-  gym5: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=800&q=80",
-  gym6: "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80",
+  trainer: "/images/gallery/team-rayhan-fitness.webp",
+  gym1: "/images/gallery/mirpur-view.webp",
+  gym2: "/images/gallery/lalbagh-weights.webp",
+  gym3: "/images/gallery/mirpur-cardio.webp",
+  gym4: "/images/gallery/dhanmondi-leg-press.webp",
+  gym5: "/images/gallery/dhanmondi-cable-tower.webp",
+  gym6: "/images/gallery/lalbagh-physique.webp",
   r1: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
   r2: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
   r3: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
   r4: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
-  coachPortrait:
-    "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=800&q=80",
-  coachAction:
-    "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80",
-  insta1:
-    "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&q=80",
-  insta2:
-    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80",
-  insta3:
-    "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80",
-  insta4:
-    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
-  insta5:
-    "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=600&q=80",
-  insta6:
-    "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&q=80",
+  coachPortrait: "/images/gallery/coach-rayhan-training.webp",
+  coachAction: "/images/gallery/coach-rayhan-medals.webp",
+  insta1: "/images/gallery/mirpur-community.webp",
+  insta2: "/images/gallery/lalbagh-community.webp",
+  insta3: "/images/gallery/female-training-zone.webp",
+  insta4: "/images/gallery/lalbagh-champions.webp",
+  insta5: "/images/gallery/national-stage-judging.webp",
+  insta6: "/images/gallery/dhanmondi-pro-mentorship.webp",
 };
 
 // ─── Shared tokens ────────────────────────────────────────
@@ -1042,6 +1033,7 @@ export function BentoSection() {
     {
       id: 0,
       src: DEMO.trainer,
+      objectPosition: "center top",
       tag: "Signature Zone",
       title: "Strength Training",
       desc: "Progressive overload built around your body's signals, not a spreadsheet.",
@@ -1086,6 +1078,7 @@ export function BentoSection() {
     {
       id: 4,
       src: DEMO.gym6,
+      objectPosition: "center top",
       tag: "Mindset",
       title: "Mental Edge",
       desc: null,
@@ -1186,6 +1179,7 @@ export function BentoSection() {
                     width: "100%",
                     height: "100%",
                     objectFit: "cover",
+                    objectPosition: (cell as { objectPosition?: string }).objectPosition || "center",
                     display: "block",
                     transition: "transform 0.55s ease",
                     transform: isHov ? "scale(1.06)" : "scale(1)",
@@ -2941,6 +2935,7 @@ export function Footer() {
     ],
     Company: [
       { label: "About Rayhan Fitness", href: "#about" },
+      { label: "Gym Atmosphere & Gallery", href: "#gallery" },
       { label: "Pricing & Plans", href: "#packages" },
       { label: "FAQ", href: "#faq" },
       { label: "Contact Hotline", href: "#contact" },

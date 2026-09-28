@@ -24,6 +24,7 @@ const NAV_ITEMS: NavItem[] = [
     id: "female-fitness",
   },
   { label: "Trainers & Coaches", desktopLabel: "Trainers", id: "about" },
+  { label: "Gym Atmosphere & Gallery", desktopLabel: "Gallery", id: "gallery" },
   { label: "Contact Us", desktopLabel: "Contact", id: "contact" },
 ];
 
