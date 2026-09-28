@@ -1,6 +1,25 @@
 "use client";
+import { BranchSelector } from "@/components/BranchSelector";
+import { useBranch } from "@/context/BranchContext";
+import {
+  BRANCHES,
+  EMAIL,
+  FAQ_ITEMS,
+  MEMBERSHIP_INCLUSIONS,
+  PHONE_NUMBER,
+  PHONE_TEL,
+  WHATSAPP_BASE_URL,
+  WHATSAPP_FEMALE_PREFILLED,
+  getGymTourWhatsAppUrl,
+} from "@/data/gymData";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 // ─── Demo image placeholder helper ──────────────────────
 const Img = ({
@@ -35,6 +54,22 @@ const DEMO = {
   r2: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
   r3: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&q=80",
   r4: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&q=80",
+  coachPortrait:
+    "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=800&q=80",
+  coachAction:
+    "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=800&q=80",
+  insta1:
+    "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&q=80",
+  insta2:
+    "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&q=80",
+  insta3:
+    "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&q=80",
+  insta4:
+    "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
+  insta5:
+    "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=600&q=80",
+  insta6:
+    "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=600&q=80",
 };
 
 // ─── Shared tokens ────────────────────────────────────────
@@ -139,15 +174,20 @@ function useInView(margin = "0px"): [React.RefObject<null>, boolean] {
 
 // ─── useMediaQuery ──────────────────────────────────────────
 function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia(query);
-    setMatches(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, [query]);
-  return matches;
+  const subscribe = useCallback(
+    (callback: () => void) => {
+      const mql = window.matchMedia(query);
+      mql.addEventListener("change", callback);
+      return () => mql.removeEventListener("change", callback);
+    },
+    [query],
+  );
+  const getSnapshot = useCallback(
+    () => window.matchMedia(query).matches,
+    [query],
+  );
+  const getServerSnapshot = () => false;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 function useResponsive() {
@@ -155,6 +195,200 @@ function useResponsive() {
   const isTablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px)");
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   return { isMobile, isTablet, isDesktop };
+}
+
+// ═══════════════════════════════════════════════════════════
+// FEMALE FITNESS SECTION
+// ═══════════════════════════════════════════════════════════
+export function FemaleFitnessSection() {
+  const [ref, inView] = useInView("-60px");
+  const { isMobile, isTablet } = useResponsive();
+
+  const pillars = [
+    {
+      icon: (
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      ),
+      title: "Daily Exclusive Windows",
+      badge: "1:00 PM – 3:00 PM",
+      desc: "Every single day across Lalbagh, Dhanmondi, and Mirpur, our main floor is strictly reserved for women only.",
+    },
+    {
+      icon: (
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+      ),
+      title: "Certified Female Trainers",
+      badge: "Professional Mentorship",
+      desc: "Work with experienced female coaches specialized in weight loss, strength conditioning, and personalized diet charts.",
+    },
+    {
+      icon: (
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+      ),
+      title: "Complete Privacy & Comfort",
+      badge: "100% Female Floor Staff",
+      desc: "Zero male presence on the floor during designated hours. Private changing rooms, lockers, and clean showers.",
+    },
+  ];
+
+  return (
+    <section
+      id="female-fitness"
+      style={{
+        ...s.section,
+        background: tokens.bgWarm,
+        padding: isMobile ? "64px 0" : "96px 0",
+        borderTop: `1px solid ${tokens.borderSubtle}`,
+        borderBottom: `1px solid ${tokens.borderSubtle}`,
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
+          <span style={s.label}>Women&apos;s Safe Zone</span>
+          <h2 style={s.heading}>
+            Safe, Empowering &amp;
+            <br />
+            <span style={{ color: tokens.goldLight }}>
+              Dedicated Fitness for Women
+            </span>
+          </h2>
+          <p style={{ ...s.sub, maxWidth: 540, margin: "16px auto 0" }}>
+            A secure, empowering environment where you can train with complete
+            privacy, certified female trainers, and tailored nutrition plans.
+          </p>
+        </div>
+
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : isTablet
+                ? "repeat(2, 1fr)"
+                : "repeat(3, 1fr)",
+            gap: 24,
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(32px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}>
+          {pillars.map((pillar, i) => (
+            <div
+              key={i}
+              style={{
+                background: tokens.bgSurface,
+                border: `1px solid ${tokens.borderSubtle}`,
+                borderRadius: 18,
+                padding: "36px 28px",
+                display: "flex",
+                flexDirection: "column",
+                position: "relative",
+              }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 52,
+                  height: 52,
+                  borderRadius: 14,
+                  background: `${tokens.goldMid}20`,
+                  color: tokens.goldLight,
+                  marginBottom: 20,
+                }}>
+                {pillar.icon}
+              </div>
+              <span
+                style={{
+                  alignSelf: "flex-start",
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  fontWeight: 700,
+                  color: tokens.goldMid,
+                  background: `${tokens.goldMid}15`,
+                  border: `1px solid ${tokens.goldMid}30`,
+                  borderRadius: 9999,
+                  padding: "3px 12px",
+                  marginBottom: 12,
+                }}>
+                {pillar.badge}
+              </span>
+              <h3
+                style={{
+                  fontSize: "1.25rem",
+                  fontWeight: 700,
+                  color: tokens.textPrimary,
+                  marginBottom: 12,
+                }}>
+                {pillar.title}
+              </h3>
+              <p
+                style={{
+                  fontSize: "0.88rem",
+                  color: tokens.textMuted,
+                  lineHeight: 1.65,
+                  margin: 0,
+                }}>
+                {pillar.desc}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", marginTop: 44 }}>
+          <a
+            href={`${WHATSAPP_BASE_URL}?text=${WHATSAPP_FEMALE_PREFILLED}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              ...s.goldBtn,
+              padding: "16px 36px",
+              textDecoration: "none",
+            }}>
+            Join Female Fitness Program →
+          </a>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -166,10 +400,10 @@ export function AboutSection() {
   const isStacked = isMobile || isTablet;
 
   const stats = [
-    { num: "12+", label: "Years Training" },
-    { num: "3K+", label: "Clients Transformed" },
-    { num: "98%", label: "Success Rate" },
-    { num: "5×", label: "Award Winner" },
+    { num: "3", label: "Strategic Outlets" },
+    { num: "65K+", label: "Active Members" },
+    { num: "15+", label: "Certified Coaches" },
+    { num: "4.9★", label: "Member Rating" },
   ];
 
   return (
@@ -299,7 +533,7 @@ export function AboutSection() {
 
           {/* Right — content */}
           <div>
-            <span style={s.label}>About Rayhaan</span>
+            <span style={s.label}>About Rayhan Fitness</span>
             <h2 style={s.heading}>
               Built From Sweat,
               <br />
@@ -307,21 +541,23 @@ export function AboutSection() {
                 Not Theory
               </span>
             </h2>
-            <p style={{ ...s.sub, maxWidth: 480, marginBottom: 24 }}>
-              Rayhaan isn't a gym persona — it's a philosophy. Forged through 12
-              years of competing, failing, and rebuilding, every program carries
-              the weight of real-world lessons, not textbook blueprints.
+            <p style={{ ...s.sub, maxWidth: 500, marginBottom: 20 }}>
+              Rayhan Fitness isn&apos;t just a gym — it&apos;s a powerhouse
+              forged through national bodybuilding championship victories,
+              proven coaching blueprints, and an uncompromising commitment to
+              athlete performance.
             </p>
             <p
               style={{
                 ...s.sub,
-                maxWidth: 480,
+                maxWidth: 500,
                 color: `${tokens.textMuted}CC`,
-                marginBottom: 40,
+                marginBottom: 36,
               }}>
-              Whether you're chasing your first pull-up or your next podium, the
-              system adapts to you — not the other way around. No shortcuts. No
-              excuses. Just a process that works.
+              Across our Lalbagh, Dhanmondi, and Mirpur outlets, we provide
+              world-class imported biomechanics equipment, dedicated female-only
+              training windows, and guidance from Bangladesh&apos;s finest
+              certified fitness professionals.
             </p>
 
             {/* Stats row */}
@@ -370,14 +606,26 @@ export function AboutSection() {
             </div>
 
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              <button
-                style={{ ...s.goldBtn, width: isMobile ? "100%" : "auto" }}>
-                My Story
-              </button>
-              <button
-                style={{ ...s.outlineBtn, width: isMobile ? "100%" : "auto" }}>
-                View Credentials
-              </button>
+              <a
+                href="#outlets"
+                style={{
+                  ...s.goldBtn,
+                  width: isMobile ? "100%" : "auto",
+                  textAlign: "center",
+                  textDecoration: "none",
+                }}>
+                Explore Outlets →
+              </a>
+              <a
+                href="#packages"
+                style={{
+                  ...s.outlineBtn,
+                  width: isMobile ? "100%" : "auto",
+                  textAlign: "center",
+                  textDecoration: "none",
+                }}>
+                View Memberships
+              </a>
             </div>
           </div>
         </div>
@@ -548,8 +796,8 @@ export function CoachProfileSection() {
                   lineHeight: 1.65,
                   margin: 0,
                 }}>
-                "I don't coach bodies. I coach the decision to keep showing up
-                when motivation runs out."
+                &ldquo;I don&apos;t coach bodies. I coach the decision to keep
+                showing up when motivation runs out.&rdquo;
               </p>
             </div>
 
@@ -557,7 +805,7 @@ export function CoachProfileSection() {
               Twelve years in the trenches — as an athlete first, then as a
               coach. Rayhaan has guided over 3,000 people through
               transformations that started with one honest conversation about
-              what wasn't working.
+              what wasn&apos;t working.
             </p>
 
             {/* Credential grid */}
@@ -618,7 +866,7 @@ export function CoachProfileSection() {
 // ═══════════════════════════════════════════════════════════
 export function InstagramFeedSection() {
   const [ref, inView] = useInView("-60px");
-  const [hovered, setHovered] = useState(null);
+  const [hovered, setHovered] = useState<number | null>(null);
   const { isMobile, isTablet } = useResponsive();
 
   const posts = [
@@ -1146,61 +1394,376 @@ export function BentoSection() {
 }
 
 // ═══════════════════════════════════════════════════════════
+// OUTLET LOCATIONS SECTION
+// ═══════════════════════════════════════════════════════════
+export function OutletLocationsSection() {
+  const [ref, inView] = useInView("-60px");
+  const { isMobile, isTablet } = useResponsive();
+  const { selectedBranch, setSelectedBranch } = useBranch();
+
+  return (
+    <section
+      id="outlets"
+      style={{
+        ...s.section,
+        background: tokens.bgWarm,
+        padding: isMobile ? "64px 0" : "96px 0",
+      }}>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
+          <span style={s.label}>Our Facilities</span>
+          <h2 style={s.heading}>
+            3 Strategic Outlets
+            <br />
+            <span style={{ color: tokens.goldLight }}>Across Dhaka</span>
+          </h2>
+          <p style={{ ...s.sub, maxWidth: 540, margin: "16px auto 24px" }}>
+            State-of-the-art facilities equipped with imported biomechanics
+            machinery, certified coaches, and daily dedicated female workout
+            hours.
+          </p>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <BranchSelector />
+          </div>
+        </div>
+
+        <div
+          ref={ref}
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : isTablet
+                ? "repeat(2, 1fr)"
+                : "repeat(3, 1fr)",
+            gap: 24,
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(32px)",
+            transition: "opacity 0.8s ease, transform 0.8s ease",
+          }}>
+          {BRANCHES.map((b) => {
+            const isSelected = selectedBranch === b.id;
+            return (
+              <div
+                key={b.id}
+                onClick={() => setSelectedBranch(b.id)}
+                style={{
+                  background: isSelected
+                    ? `linear-gradient(145deg, ${tokens.bgSurface}, ${tokens.bgOverlay})`
+                    : tokens.bgSurface,
+                  border: isSelected
+                    ? `1.5px solid ${tokens.goldMid}`
+                    : `1px solid ${tokens.borderSubtle}`,
+                  borderRadius: 20,
+                  padding: "32px 28px",
+                  display: "flex",
+                  flexDirection: "column",
+                  position: "relative",
+                  cursor: "pointer",
+                  boxShadow: isSelected
+                    ? `0 12px 40px ${tokens.goldMid}20`
+                    : "none",
+                  transition: "all 0.3s ease",
+                }}>
+                {isSelected && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: -12,
+                      right: 24,
+                      background: tokens.goldMid,
+                      color: tokens.textInverse,
+                      fontSize: "0.6rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.15em",
+                      textTransform: "uppercase",
+                      padding: "3px 12px",
+                      borderRadius: 9999,
+                    }}>
+                    Selected
+                  </div>
+                )}
+
+                <div style={{ marginBottom: 16 }}>
+                  <span
+                    style={{
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.2em",
+                      textTransform: "uppercase",
+                      color: tokens.goldMid,
+                    }}>
+                    {b.id === "lalbagh"
+                      ? "Flagship Facility"
+                      : "Strategic Outlet"}
+                  </span>
+                  <h3
+                    style={{
+                      fontSize: "1.4rem",
+                      fontWeight: 700,
+                      color: tokens.textPrimary,
+                      marginTop: 4,
+                    }}>
+                    {b.name}
+                  </h3>
+                </div>
+
+                {/* Address */}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "flex-start",
+                    marginBottom: 16,
+                  }}>
+                  <span style={{ fontSize: "1rem", lineHeight: 1.2 }}>📍</span>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "0.85rem",
+                      color: tokens.textMuted,
+                      lineHeight: 1.5,
+                    }}>
+                    {b.address}
+                  </p>
+                </div>
+
+                {/* Hours Box */}
+                <div
+                  style={{
+                    background: tokens.bgWarm,
+                    border: `1px solid ${tokens.borderSubtle}`,
+                    borderRadius: 12,
+                    padding: "14px 16px",
+                    marginBottom: 20,
+                  }}>
+                  <div style={{ marginBottom: 8 }}>
+                    <div
+                      style={{
+                        fontSize: "0.62rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        color: tokens.goldMid,
+                        fontWeight: 700,
+                      }}>
+                      Operational Hours
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: tokens.textPrimary,
+                        fontWeight: 500,
+                      }}>
+                      {b.hours.combined}
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: "0.62rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1em",
+                        color: "#F472B6",
+                        fontWeight: 700,
+                      }}>
+                      Female-Only Slot
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.8rem",
+                        color: tokens.textPrimary,
+                        fontWeight: 500,
+                      }}>
+                      {b.hours.femaleSlot}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Key Features */}
+                <div style={{ flex: 1, marginBottom: 24 }}>
+                  <div
+                    style={{
+                      fontSize: "0.62rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.15em",
+                      color: tokens.goldMuted,
+                      fontWeight: 700,
+                      marginBottom: 10,
+                    }}>
+                    Branch Highlights
+                  </div>
+                  {b.features.map((feat, fi) => (
+                    <div
+                      key={fi}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                        marginBottom: 7,
+                      }}>
+                      <span
+                        style={{ color: tokens.goldMid, fontSize: "0.75rem" }}>
+                        ✓
+                      </span>
+                      <span
+                        style={{ fontSize: "0.8rem", color: tokens.textMuted }}>
+                        {feat}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Action Buttons */}
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <a
+                      href={b.mapUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        flex: 1,
+                        padding: "10px 0",
+                        textAlign: "center",
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        background: tokens.bgWarm,
+                        color: tokens.textPrimary,
+                        border: `1px solid ${tokens.borderSubtle}`,
+                        borderRadius: 8,
+                        textDecoration: "none",
+                      }}>
+                      🗺️ Directions
+                    </a>
+                    <a
+                      href={b.phoneTel}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{
+                        flex: 1,
+                        padding: "10px 0",
+                        textAlign: "center",
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        background: tokens.bgWarm,
+                        color: tokens.goldMid,
+                        border: `1px solid ${tokens.borderSubtle}`,
+                        borderRadius: 8,
+                        textDecoration: "none",
+                      }}>
+                      📞 Call
+                    </a>
+                  </div>
+                  <a
+                    href={`${WHATSAPP_BASE_URL}?text=${encodeURIComponent(`Hi Rayhan Fitness, I would like to book a visit to the ${b.name}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    style={{
+                      padding: "11px 0",
+                      textAlign: "center",
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                      background: isSelected ? tokens.goldMid : "transparent",
+                      color: isSelected ? tokens.textInverse : tokens.goldMid,
+                      border: isSelected
+                        ? "none"
+                        : `1px solid ${tokens.goldMid}`,
+                      borderRadius: 8,
+                      textDecoration: "none",
+                    }}>
+                    💬 WhatsApp {b.label}
+                  </a>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
 // 3. PACKAGES SECTION
 // ═══════════════════════════════════════════════════════════
 export function PackagesSection() {
   const [ref, inView] = useInView("-60px");
   const [hov, setHov] = useState<number | null>(null);
   const { isMobile, isTablet } = useResponsive();
+  const { branch } = useBranch();
+
+  const price3 = branch.pricing["3months"];
+  const price6 = branch.pricing["6months"];
+  const price12 = branch.pricing["12months"];
+
+  const perMonth3 = Math.round(price3 / 3);
+  const perMonth6 = Math.round(price6 / 6);
+  const perMonth12 = Math.round(price12 / 12);
+
+  const savings6 = Math.round(((price3 * 2 - price6) / (price3 * 2)) * 100);
+  const savings12 = Math.round(((price3 * 4 - price12) / (price3 * 4)) * 100);
 
   const plans = [
     {
-      name: "Foundation",
-      price: "4,999",
-      period: "/ month",
+      name: "3 Months",
+      duration: "3 Months",
+      price: price3.toLocaleString("en-BD"),
+      period: "/ 3 months",
+      perMonth: `৳${perMonth3.toLocaleString("en-BD")}/mo`,
       badge: null,
-      desc: "Built for beginners who need structure before intensity.",
-      features: [
-        "3 sessions per week",
-        "Personalized program design",
-        "Nutrition blueprint",
-        "Weekly check-in call",
-        "Form video review",
-      ],
-      excluded: ["Priority scheduling", "Body composition analysis"],
+      savings: null,
+      desc: `Ideal starter package for dedicated transformation at our ${branch.label} branch.`,
+      features: MEMBERSHIP_INCLUSIONS,
+      whatsappUrl: `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(
+        `Hi Rayhan Fitness, I would like to join the 3 Months plan (৳${price3.toLocaleString("en-BD")}) at the ${branch.name}.`,
+      )}`,
     },
     {
-      name: "Accelerate",
-      price: "8,999",
-      period: "/ month",
-      badge: "Most Popular",
-      desc: "For committed athletes ready to break plateaus and build momentum.",
+      name: "6 Months",
+      duration: "6 Months",
+      price: price6.toLocaleString("en-BD"),
+      period: "/ 6 months",
+      perMonth: `৳${perMonth6.toLocaleString("en-BD")}/mo`,
+      badge: "Best Value",
+      savings: savings6 > 0 ? `Save ${savings6}% vs quarterly` : null,
+      desc: `Our most popular option for sustainable strength & physique gains.`,
       features: [
-        "5 sessions per week",
-        "Adaptive programming",
-        "Macro & meal planning",
-        "Bi-weekly strategy calls",
-        "Form video review",
-        "Priority scheduling",
+        ...MEMBERSHIP_INCLUSIONS,
+        "Dedicated monthly progress check-in",
       ],
-      excluded: ["Body composition analysis"],
+      whatsappUrl: `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(
+        `Hi Rayhan Fitness, I would like to join the 6 Months plan (৳${price6.toLocaleString("en-BD")}) at the ${branch.name}.`,
+      )}`,
     },
     {
-      name: "Elite",
-      price: "14,999",
-      period: "/ month",
-      badge: "Full Access",
-      desc: "Total immersion — for those who refuse to leave anything on the table.",
+      name: "12 Months",
+      duration: "12 Months",
+      price: price12.toLocaleString("en-BD"),
+      period: "/ 12 months",
+      perMonth: `৳${perMonth12.toLocaleString("en-BD")}/mo`,
+      badge: "Maximum Savings",
+      savings: savings12 > 0 ? `Save ${savings12}% vs quarterly` : null,
+      desc: `Full-year commitment with the lowest monthly cost for lifelong fitness.`,
       features: [
-        "Unlimited sessions",
-        "24/7 coach access (WhatsApp)",
-        "Full meal plan + recipes",
-        "Weekly strategy calls",
-        "Form video review",
-        "Priority scheduling",
-        "Monthly body composition analysis",
+        ...MEMBERSHIP_INCLUSIONS,
+        "Dedicated monthly progress check-in",
+        "Priority guidance & diet modifications",
       ],
-      excluded: [],
+      whatsappUrl: `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(
+        `Hi Rayhan Fitness, I would like to join the 12 Months plan (৳${price12.toLocaleString("en-BD")}) at the ${branch.name}.`,
+      )}`,
     },
   ];
 
@@ -1218,17 +1781,25 @@ export function PackagesSection() {
           margin: "0 auto",
           padding: `0 ${isMobile ? 20 : 32}px`,
         }}>
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
-          <span style={s.label}>Investment</span>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
+          <span style={s.label}>Membership Pricing</span>
           <h2 style={s.heading}>
-            Choose Your
+            Transparent Rates.
             <br />
-            <span style={{ color: tokens.goldLight }}>Arena</span>
+            <span style={{ color: tokens.goldLight }}>Zero Hidden Fees</span>
           </h2>
-          <p style={{ ...s.sub, maxWidth: 480, margin: "16px auto 0" }}>
-            Every tier is a commitment. Pick the one that matches the intensity
-            you're bringing.
+          <p style={{ ...s.sub, maxWidth: 520, margin: "16px auto 24px" }}>
+            Select your preferred branch to view official membership tiers.
+            Every plan includes customized diet planning and coach guidance.
           </p>
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              justifyContent: "center",
+            }}>
+            <BranchSelector />
+          </div>
         </div>
 
         <div
@@ -1246,7 +1817,7 @@ export function PackagesSection() {
             transition: "opacity 0.8s ease, transform 0.8s ease",
           }}>
           {plans.map((plan, i) => {
-            const isPopular = plan.badge === "Most Popular";
+            const isPopular = plan.badge === "Best Value";
             const isHov = hov === i;
             return (
               <div
@@ -1294,14 +1865,35 @@ export function PackagesSection() {
                   </div>
                 )}
 
+                {/* Savings tag */}
+                {plan.savings && (
+                  <div
+                    style={{
+                      alignSelf: "flex-start",
+                      background: `${tokens.goldMid}20`,
+                      color: tokens.goldLight,
+                      border: `1px solid ${tokens.goldMid}40`,
+                      borderRadius: 9999,
+                      padding: "3px 10px",
+                      fontSize: "0.68rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.05em",
+                      textTransform: "uppercase",
+                      marginBottom: 10,
+                    }}>
+                    {plan.savings}
+                  </div>
+                )}
+
                 {/* Plan name */}
                 <div
                   style={{
-                    fontSize: "0.6rem",
-                    letterSpacing: "0.3em",
+                    fontSize: "0.7rem",
+                    letterSpacing: "0.25em",
                     textTransform: "uppercase",
                     color: tokens.goldMid,
-                    marginBottom: 10,
+                    fontWeight: 700,
+                    marginBottom: 8,
                   }}>
                   {plan.name}
                 </div>
@@ -1312,11 +1904,11 @@ export function PackagesSection() {
                     display: "flex",
                     alignItems: "flex-end",
                     gap: 4,
-                    marginBottom: 6,
+                    marginBottom: 4,
                   }}>
                   <span
                     style={{
-                      fontSize: "0.8rem",
+                      fontSize: "0.85rem",
                       color: tokens.textMuted,
                       alignSelf: "flex-start",
                       marginTop: 8,
@@ -1342,12 +1934,25 @@ export function PackagesSection() {
                   </span>
                 </div>
 
+                {/* Monthly breakdown */}
+                <div
+                  style={{
+                    fontSize: "0.75rem",
+                    color: tokens.textMuted,
+                    marginBottom: 18,
+                  }}>
+                  Effective:{" "}
+                  <span style={{ color: tokens.textPrimary, fontWeight: 600 }}>
+                    {plan.perMonth}
+                  </span>
+                </div>
+
                 <p
                   style={{
                     fontSize: "0.85rem",
                     color: tokens.textMuted,
                     lineHeight: 1.6,
-                    marginBottom: 28,
+                    marginBottom: 24,
                     minHeight: 40,
                   }}>
                   {plan.desc}
@@ -1369,7 +1974,7 @@ export function PackagesSection() {
                       key={j}
                       style={{
                         display: "flex",
-                        alignItems: "center",
+                        alignItems: "flex-start",
                         gap: 10,
                         marginBottom: 11,
                       }}>
@@ -1383,6 +1988,7 @@ export function PackagesSection() {
                           alignItems: "center",
                           justifyContent: "center",
                           flexShrink: 0,
+                          marginTop: 2,
                         }}>
                         <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                           <path
@@ -1398,45 +2004,7 @@ export function PackagesSection() {
                         style={{
                           fontSize: "0.83rem",
                           color: tokens.textPrimary,
-                        }}>
-                        {f}
-                      </span>
-                    </div>
-                  ))}
-                  {plan.excluded.map((f, j) => (
-                    <div
-                      key={j}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        marginBottom: 11,
-                        opacity: 0.35,
-                      }}>
-                      <div
-                        style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: "50%",
-                          background: tokens.borderSubtle,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          flexShrink: 0,
-                        }}>
-                        <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-                          <path
-                            d="M2 2L6 6M6 2L2 6"
-                            stroke={tokens.textMuted}
-                            strokeWidth="1.2"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                      </div>
-                      <span
-                        style={{
-                          fontSize: "0.83rem",
-                          color: tokens.textMuted,
+                          lineHeight: 1.4,
                         }}>
                         {f}
                       </span>
@@ -1444,16 +2012,22 @@ export function PackagesSection() {
                   ))}
                 </div>
 
-                <button
+                <a
+                  href={plan.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   style={{
                     ...(isPopular ? s.goldBtn : s.outlineBtn),
                     width: "100%",
                     textAlign: "center",
                     padding: "14px 0",
                     background: isPopular ? tokens.goldMid : "transparent",
+                    textDecoration: "none",
+                    boxSizing: "border-box",
+                    display: "block",
                   }}>
-                  {isPopular ? "Start Now" : "Get Started"}
-                </button>
+                  {isPopular ? "Join 6-Month Plan" : `Join ${plan.duration}`}
+                </a>
               </div>
             );
           })}
@@ -1463,10 +2037,15 @@ export function PackagesSection() {
           style={{
             textAlign: "center",
             color: tokens.textMuted,
-            fontSize: "0.78rem",
-            marginTop: 28,
+            fontSize: "0.82rem",
+            marginTop: 32,
+            maxWidth: 620,
+            marginLeft: "auto",
+            marginRight: "auto",
+            lineHeight: 1.6,
           }}>
-          All plans include a free strategy call. No lock-in contracts.
+          All plans include free body assessment, customized diet plan, and
+          certified trainer guidance.
         </p>
       </div>
     </section>
@@ -1475,70 +2054,68 @@ export function PackagesSection() {
 
 // ═══════════════════════════════════════════════════════════
 // 4. REVIEWS SECTION — Vertical Ghost Drift
-// Three columns of testimonial cards drift continuously:
-// col 1 ↑, col 2 ↓, col 3 ↑ (slower). Cards are fully readable
-// at rest with a soft "ghosty" haze (slight blur, near-full
-// opacity). Hovering anywhere on the wall simply pauses the
-// drift — no per-card focus effect, no extra opacity drop.
 // ═══════════════════════════════════════════════════════════
-export function ReviewsSection() {
-  const [ref, inView] = useInView("-40px");
-  const [paused, setPaused] = useState(false);
-  const { isMobile } = useResponsive();
+interface VerifiedReview {
+  name: string;
+  initials: string;
+  branch: string;
+  stars: number;
+  quote: string;
+}
 
-  const reviews = [
-    {
-      name: "Tariq Al-Rashid",
-      role: "Lost 18kg in 5 months",
-      avatar: DEMO.r1,
-      stars: 5,
-      quote: "He actually listened. Six months in, I ran my first 10K.",
-    },
-    {
-      name: "Priya Sharma",
-      role: "Gained 6kg muscle mass",
-      avatar: DEMO.r2,
-      stars: 5,
-      quote: "I now deadlift twice my bodyweight, and I'm proud of it.",
-    },
-    {
-      name: "James Whitfield",
-      role: "Marathon prep",
-      avatar: DEMO.r3,
-      stars: 5,
-      quote:
-        "My marathon PR dropped by 22 minutes. He gets the mental side too.",
-    },
-    {
-      name: "Nadia Okonkwo",
-      role: "Post-pregnancy comeback",
-      avatar: DEMO.r4,
-      stars: 5,
-      quote:
-        "Best shape of my adult life at 34 — and it actually respected my body.",
-    },
-    {
-      name: "Farid Hossain",
-      role: "Strength plateau broken",
-      avatar: DEMO.r1,
-      stars: 5,
-      quote: "Stuck for two years. Three months with Rayhaan, +25kg on my max.",
-    },
-    {
-      name: "Sana Malik",
-      role: "First competition prep",
-      avatar: DEMO.r2,
-      stars: 5,
-      quote: "He managed my nerves and my routine, not just my training.",
-    },
-  ];
+const VERIFIED_REVIEWS: VerifiedReview[] = [
+  {
+    name: "M J U Patwary",
+    initials: "MP",
+    branch: "Mirpur Outlet (Lift 11)",
+    stars: 5,
+    quote:
+      "After Gold's Gym, Rayhan Fitness is the finest gym in BD. The equipment quality at Mirpur Lift-11 is unmatched!",
+  },
+  {
+    name: "Newaaz Andy",
+    initials: "NA",
+    branch: "Dhanmondi Outlet",
+    stars: 5,
+    quote:
+      "Super impressed with the Dhanmondi Branch. Respectful environment, top tier trainers, and enough space between sets.",
+  },
+  {
+    name: "Abhi Zit",
+    initials: "AZ",
+    branch: "Lalbagh Flagship",
+    stars: 5,
+    quote:
+      "5 years of my fitness journey, I've never trained anywhere else. Rayhan Fitness is like family.",
+  },
+  {
+    name: "M J U Patwary",
+    initials: "MP",
+    branch: "Mirpur Outlet (Lift 11)",
+    stars: 5,
+    quote:
+      "The equipment quality at Mirpur Lift-11 is unmatched across Dhaka. Great vibe and professional staff.",
+  },
+  {
+    name: "Newaaz Andy",
+    initials: "NA",
+    branch: "Dhanmondi Outlet",
+    stars: 5,
+    quote:
+      "Respectful environment, top tier trainers, and modern biomechanics gear. Highly recommended.",
+  },
+  {
+    name: "Abhi Zit",
+    initials: "AZ",
+    branch: "Lalbagh Flagship",
+    stars: 5,
+    quote:
+      "The championship coach lineup and community in Lalbagh push you to be your absolute best.",
+  },
+];
 
-  // Three columns, two cards each — short and uncluttered
-  const col1 = [reviews[0], reviews[3]];
-  const col2 = [reviews[1], reviews[4]];
-  const col3 = [reviews[2], reviews[5]];
-
-  const Stars = ({ n }) => (
+function ReviewStars({ n }: { n: number }) {
+  return (
     <div style={{ display: "flex", gap: 2, marginBottom: 10 }}>
       {Array.from({ length: n }).map((_, i) => (
         <svg
@@ -1552,8 +2129,10 @@ export function ReviewsSection() {
       ))}
     </div>
   );
+}
 
-  const Card = ({ r }) => (
+function ReviewCard({ r }: { r: VerifiedReview }) {
+  return (
     <div
       style={{
         background: tokens.bgSurface,
@@ -1561,60 +2140,75 @@ export function ReviewsSection() {
         borderRadius: 16,
         padding: "24px 22px",
       }}>
-      <Stars n={r.stars} />
+      <ReviewStars n={r.stars} />
       <p
         style={{
-          fontSize: "0.84rem",
+          fontSize: "0.85rem",
           color: tokens.textPrimary,
           lineHeight: 1.6,
           fontStyle: "italic",
           margin: "0 0 16px",
         }}>
-        "{r.quote}"
+        &ldquo;{r.quote}&rdquo;
       </p>
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <div
           style={{
-            width: 32,
-            height: 32,
+            width: 36,
+            height: 36,
             borderRadius: "50%",
-            overflow: "hidden",
+            background: `${tokens.goldMid}20`,
+            border: `1.5px solid ${tokens.goldMid}`,
+            color: tokens.goldLight,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: 700,
+            fontSize: "0.78rem",
+            letterSpacing: "0.05em",
             flexShrink: 0,
-            border: `1px solid ${tokens.goldMuted}`,
           }}>
-          <Img
-            src={r.avatar}
-            alt={r.name}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
+          {r.initials}
         </div>
         <div>
           <div
             style={{
               fontWeight: 700,
               color: tokens.textPrimary,
-              fontSize: "0.78rem",
+              fontSize: "0.82rem",
             }}>
             {r.name}
           </div>
           <div
             style={{
-              fontSize: "0.6rem",
-              letterSpacing: "0.13em",
+              fontSize: "0.62rem",
+              letterSpacing: "0.1em",
               textTransform: "uppercase",
               color: tokens.goldMid,
               marginTop: 2,
             }}>
-            {r.role}
+            {r.branch}
           </div>
         </div>
       </div>
     </div>
   );
+}
 
-  // Each column renders its set TWICE stacked for a seamless loop,
-  // then slides translateY(0) → translateY(-50%) (or the reverse).
-  const Column = ({ items, direction, duration }) => (
+function ReviewColumn({
+  items,
+  direction,
+  duration,
+  paused,
+  isMobile,
+}: {
+  items: VerifiedReview[];
+  direction: "up" | "down";
+  duration: number;
+  paused: boolean;
+  isMobile: boolean;
+}) {
+  return (
     <div
       style={{
         position: "relative",
@@ -1640,11 +2234,21 @@ export function ReviewsSection() {
           animationPlayState: paused ? "paused" : "running",
         }}>
         {[...items, ...items].map((r, i) => (
-          <Card r={r} key={i} />
+          <ReviewCard r={r} key={i} />
         ))}
       </div>
     </div>
   );
+}
+
+export function ReviewsSection() {
+  const [ref, inView] = useInView("-40px");
+  const [paused, setPaused] = useState(false);
+  const { isMobile } = useResponsive();
+
+  const col1 = [VERIFIED_REVIEWS[0], VERIFIED_REVIEWS[3]];
+  const col2 = [VERIFIED_REVIEWS[1], VERIFIED_REVIEWS[4]];
+  const col3 = [VERIFIED_REVIEWS[2], VERIFIED_REVIEWS[5]];
 
   return (
     <section
@@ -1653,7 +2257,6 @@ export function ReviewsSection() {
         ...s.section,
         padding: isMobile ? "64px 0" : "96px 0",
         overflow: "hidden",
-        filter: "blur(0.4px)",
       }}>
       <style>{`
         @keyframes ghostScrollUp {
@@ -1673,17 +2276,18 @@ export function ReviewsSection() {
         style={{
           maxWidth: 1280,
           margin: "0 auto",
-          padding: `0 ${isMobile ? 28 : 96}px`,
+          padding: `0 ${isMobile ? 20 : 32}px`,
         }}>
-        <div style={{ textAlign: "center", marginBottom: isMobile ? 40 : 64 }}>
-          <span style={s.label}>Testimonials</span>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
+          <span style={s.label}>Real Member Experiences</span>
           <h2 style={s.heading}>
             Results
             <br />
             <span style={{ color: tokens.goldLight }}>Speak First</span>
           </h2>
           <p style={{ ...s.sub, maxWidth: 460, margin: "16px auto 0" }}>
-            Hover anywhere on the wall to pause the drift.
+            Verified reviews from our Lalbagh, Dhanmondi, and Mirpur
+            communities.
           </p>
         </div>
 
@@ -1698,9 +2302,159 @@ export function ReviewsSection() {
             opacity: inView ? 1 : 0,
             transition: "opacity 0.9s ease",
           }}>
-          <Column items={col1} direction="up" duration={22} />
-          <Column items={col2} direction="down" duration={26} />
-          {!isMobile && <Column items={col3} direction="up" duration={30} />}
+          <ReviewColumn
+            items={col1}
+            direction="up"
+            duration={22}
+            paused={paused}
+            isMobile={isMobile}
+          />
+          <ReviewColumn
+            items={col2}
+            direction="down"
+            duration={26}
+            paused={paused}
+            isMobile={isMobile}
+          />
+          {!isMobile && (
+            <ReviewColumn
+              items={col3}
+              direction="up"
+              duration={30}
+              paused={paused}
+              isMobile={isMobile}
+            />
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════
+// FAQ SECTION (Accordion)
+// ═══════════════════════════════════════════════════════════
+export function FAQSection() {
+  const [ref, inView] = useInView("-60px");
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const { isMobile } = useResponsive();
+
+  const toggle = (idx: number) => {
+    setOpenIndex(openIndex === idx ? null : idx);
+  };
+
+  return (
+    <section
+      id="faq"
+      style={{
+        ...s.section,
+        background: tokens.bgWarm,
+        padding: isMobile ? "64px 0" : "96px 0",
+        borderTop: `1px solid ${tokens.borderSubtle}`,
+      }}>
+      <div
+        style={{
+          maxWidth: 860,
+          margin: "0 auto",
+          padding: `0 ${isMobile ? 20 : 32}px`,
+        }}>
+        <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
+          <span style={s.label}>Frequently Asked Questions</span>
+          <h2 style={s.heading}>
+            Got Questions?
+            <br />
+            <span style={{ color: tokens.goldLight }}>We Have Answers</span>
+          </h2>
+          <p style={{ ...s.sub, margin: "16px auto 0" }}>
+            Everything you need to know about memberships, female hours, and
+            facilities across our Dhaka outlets.
+          </p>
+        </div>
+
+        <div
+          ref={ref}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 14,
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(24px)",
+            transition: "opacity 0.7s ease, transform 0.7s ease",
+          }}>
+          {FAQ_ITEMS.map((item, idx) => {
+            const isOpen = openIndex === idx;
+            return (
+              <div
+                key={idx}
+                style={{
+                  background: isOpen ? tokens.bgSurface : tokens.bgBase,
+                  border: `1px solid ${isOpen ? tokens.goldMid : tokens.borderSubtle}`,
+                  borderRadius: 14,
+                  overflow: "hidden",
+                  transition: "all 0.3s ease",
+                }}>
+                <button
+                  type="button"
+                  onClick={() => toggle(idx)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 16,
+                    padding: isMobile ? "18px 20px" : "22px 28px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    color: isOpen ? tokens.goldLight : tokens.textPrimary,
+                    fontSize: isMobile ? "0.95rem" : "1.05rem",
+                    fontWeight: 600,
+                  }}>
+                  <span>{item.q}</span>
+                  <span
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      background: isOpen
+                        ? `${tokens.goldMid}25`
+                        : tokens.bgOverlay,
+                      color: isOpen ? tokens.goldLight : tokens.textMuted,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "1.2rem",
+                      fontWeight: 700,
+                      flexShrink: 0,
+                      transition: "transform 0.3s ease",
+                      transform: isOpen ? "rotate(45deg)" : "none",
+                    }}>
+                    +
+                  </span>
+                </button>
+                <div
+                  style={{
+                    maxHeight: isOpen ? 220 : 0,
+                    overflow: "hidden",
+                    transition: "max-height 0.35s ease",
+                  }}>
+                  <p
+                    style={{
+                      padding: isMobile
+                        ? "0 20px 20px 20px"
+                        : "0 28px 24px 28px",
+                      margin: 0,
+                      fontSize: "0.9rem",
+                      lineHeight: 1.7,
+                      color: tokens.textMuted,
+                    }}>
+                    {item.a}
+                  </p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -1714,19 +2468,44 @@ export function ContactSection() {
   const [ref, inView] = useInView("-40px");
   const { isMobile, isTablet } = useResponsive();
   const isStacked = isMobile || isTablet;
+  const { selectedBranch } = useBranch();
   const [form, setForm] = useState({
     name: "",
-    email: "",
-    goal: "",
-    message: "",
+    phone: "",
+    userBranch: "",
+    goal: "Free Gym Tour & Fitness Assessment",
   });
   const [sent, setSent] = useState(false);
 
+  const currentBranch = form.userBranch || selectedBranch || "lalbagh";
+
+  useEffect(() => {
+    const handlePresetIntent = (e: Event) => {
+      const customEvent = e as CustomEvent<{ goal?: string; branch?: string }>;
+      if (customEvent.detail) {
+        setForm((prev) => ({
+          ...prev,
+          goal: customEvent.detail.goal || prev.goal,
+          userBranch: customEvent.detail.branch || prev.userBranch,
+        }));
+      }
+    };
+    window.addEventListener("set_contact_intent", handlePresetIntent);
+    return () =>
+      window.removeEventListener("set_contact_intent", handlePresetIntent);
+  }, []);
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >,
-  ) => setForm({ ...form, [e.target.name]: e.target.value });
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    if (name === "branch") {
+      setForm((prev) => ({ ...prev, userBranch: value }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSent(true);
@@ -1746,15 +2525,50 @@ export function ContactSection() {
     boxSizing: "border-box",
   };
 
+  const labelStyle: React.CSSProperties = {
+    fontSize: "0.7rem",
+    color: tokens.textMuted,
+    display: "block",
+    marginBottom: 6,
+    letterSpacing: "0.1em",
+    textTransform: "uppercase",
+    fontWeight: 600,
+  };
+
   const contactInfo = [
     {
-      icon: "📍",
-      label: "Location",
-      value: "21/c Nur Fattah Lane, Dhaka 1211 — Ashiyana Tower",
+      icon: "📞",
+      label: "Central Hotline",
+      value: PHONE_NUMBER,
+      link: PHONE_TEL,
     },
-    { icon: "📞", label: "Phone", value: "02-55155028" },
-    { icon: "⏰", label: "Hours", value: "Opens 6 AM daily · Closed Friday" },
-    { icon: "⭐", label: "Rating", value: "4.6 ★ from 1,002 reviews" },
+    {
+      icon: "📍",
+      label: "Lalbagh Branch (Flagship)",
+      value: "21/C, Nur Fatah Lane, 2nd Floor, Lalbagh, Dhaka",
+    },
+    {
+      icon: "📍",
+      label: "Dhanmondi Branch",
+      value: "24/3 Taj Mahal Road, Dhanmondi, Dhaka",
+    },
+    {
+      icon: "📍",
+      label: "Mirpur Branch",
+      value: "Mirpur Shopping Center Complex, Lift 11, Mirpur-2, Dhaka",
+    },
+  ];
+
+  const facebookLinks = [
+    { label: "Lalbagh FB", url: "https://facebook.com/rayhanfitnessgym" },
+    {
+      label: "Dhanmondi FB",
+      url: "https://facebook.com/profile.php?id=61551898169968",
+    },
+    {
+      label: "Mirpur FB",
+      url: "https://facebook.com/RayhanFitnessMirpur",
+    },
   ];
 
   return (
@@ -1781,33 +2595,37 @@ export function ContactSection() {
             transform: inView ? "none" : "translateY(32px)",
             transition: "all 0.8s ease",
           }}>
-          {/* Left */}
+          {/* Left info column */}
           <div>
-            <span style={s.label}>Get In Touch</span>
+            <span style={s.label}>Book Free Gym Tour</span>
             <h2
               style={{
                 ...s.heading,
                 fontSize: "clamp(1.8rem, 3vw, 2.5rem)",
                 marginBottom: 20,
               }}>
-              Ready to Start
+              Start Your
               <br />
-              <span style={{ color: tokens.goldLight }}>Your Chapter?</span>
+              <span style={{ color: tokens.goldLight }}>Transformation</span>
             </h2>
-            <p style={{ ...s.sub, marginBottom: 48 }}>
-              The first conversation is free. Tell Rayhaan where you are and
-              where you want to be — the rest is just work.
+            <p style={{ ...s.sub, marginBottom: 40, maxWidth: 480 }}>
+              Speak with our certified coaching staff, tour your nearest outlet,
+              and experience why 65,000+ athletes choose Rayhan Fitness.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
               {contactInfo.map((c, i) => (
                 <div
                   key={i}
-                  style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 14,
+                  }}>
                   <div
                     style={{
-                      width: 44,
-                      height: 44,
+                      width: 42,
+                      height: 42,
                       borderRadius: 10,
                       background: `${tokens.goldMid}18`,
                       border: `1px solid ${tokens.borderSubtle}`,
@@ -1816,6 +2634,7 @@ export function ContactSection() {
                       justifyContent: "center",
                       fontSize: "1.1rem",
                       flexShrink: 0,
+                      marginTop: 2,
                     }}>
                     {c.icon}
                   </div>
@@ -1823,71 +2642,91 @@ export function ContactSection() {
                     <div
                       style={{
                         fontSize: "0.62rem",
-                        letterSpacing: "0.2em",
+                        letterSpacing: "0.15em",
                         textTransform: "uppercase",
-                        color: tokens.textMuted,
+                        color: tokens.goldMid,
+                        fontWeight: 600,
                         marginBottom: 3,
                       }}>
                       {c.label}
                     </div>
-                    <div
-                      style={{
-                        fontSize: "0.9rem",
-                        color: tokens.textPrimary,
-                        fontWeight: 500,
-                      }}>
-                      {c.value}
-                    </div>
+                    {c.link ? (
+                      <a
+                        href={c.link}
+                        style={{
+                          fontSize: "0.95rem",
+                          color: tokens.textPrimary,
+                          fontWeight: 600,
+                          textDecoration: "none",
+                        }}>
+                        {c.value}
+                      </a>
+                    ) : (
+                      <div
+                        style={{
+                          fontSize: "0.85rem",
+                          color: tokens.textMuted,
+                          lineHeight: 1.4,
+                        }}>
+                        {c.value}
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Social strip */}
+            {/* Social channels */}
             <div
               style={{
-                marginTop: 48,
-                paddingTop: 32,
+                marginTop: 40,
+                paddingTop: 28,
                 borderTop: `1px solid ${tokens.borderSubtle}`,
               }}>
               <div
                 style={{
-                  fontSize: "0.6rem",
-                  letterSpacing: "0.25em",
+                  fontSize: "0.62rem",
+                  letterSpacing: "0.2em",
                   textTransform: "uppercase",
                   color: tokens.textMuted,
-                  marginBottom: 16,
+                  marginBottom: 14,
+                  fontWeight: 600,
                 }}>
-                Follow the Journey
+                Official Facebook Pages
               </div>
-              <div style={{ display: "flex", gap: 12 }}>
-                {["Instagram", "YouTube", "TikTok"].map((s2, i) => (
-                  <div
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                {facebookLinks.map((fb, i) => (
+                  <a
                     key={i}
+                    href={fb.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     style={{
-                      padding: "8px 16px",
+                      padding: "8px 14px",
                       background: tokens.bgSurface,
                       border: `1px solid ${tokens.borderSubtle}`,
                       borderRadius: 8,
                       fontSize: "0.75rem",
-                      color: tokens.textMuted,
-                      cursor: "pointer",
-                      letterSpacing: "0.08em",
+                      color: tokens.textPrimary,
+                      textDecoration: "none",
+                      letterSpacing: "0.05em",
+                      fontWeight: 500,
+                      transition: "border-color 0.2s",
                     }}>
-                    {s2}
-                  </div>
+                    {fb.label} ↗
+                  </a>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Right — form */}
+          {/* Right form card */}
           <div
             style={{
               background: tokens.bgSurface,
               border: `1px solid ${tokens.borderSubtle}`,
               borderRadius: 24,
-              padding: isMobile ? 28 : 48,
+              padding: isMobile ? 28 : 44,
             }}>
             {sent ? (
               <div
@@ -1906,11 +2745,14 @@ export function ContactSection() {
                     height: 64,
                     borderRadius: "50%",
                     background: `${tokens.goldMid}22`,
+                    color: tokens.goldLight,
+                    border: `1.5px solid ${tokens.goldMid}`,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginBottom: 24,
-                    fontSize: "1.6rem",
+                    marginBottom: 20,
+                    fontSize: "1.8rem",
+                    fontWeight: 700,
                   }}>
                   ✓
                 </div>
@@ -1919,146 +2761,124 @@ export function ContactSection() {
                     color: tokens.goldLight,
                     fontWeight: 700,
                     fontSize: "1.4rem",
-                    marginBottom: 12,
+                    marginBottom: 10,
                   }}>
-                  Message Received
+                  Tour &amp; Assessment Request Received!
                 </h3>
                 <p
                   style={{
                     color: tokens.textMuted,
                     fontSize: "0.9rem",
-                    maxWidth: 280,
+                    maxWidth: 320,
+                    lineHeight: 1.6,
                   }}>
-                  Rayhaan will be in touch within 4 hours. Check your email.
+                  Thank you, {form.name || "friend"}! A coach from our{" "}
+                  {currentBranch} outlet will call you shortly at {form.phone}{" "}
+                  to confirm your free gym tour and fitness assessment slot.
                 </p>
               </div>
             ) : (
               <form
                 onSubmit={handleSubmit}
                 style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                <div
-                  style={{
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.25em",
-                    textTransform: "uppercase",
-                    color: tokens.goldMid,
-                    marginBottom: 8,
-                  }}>
-                  Free Strategy Call
-                </div>
-                <h3
-                  style={{
-                    fontSize: "1.25rem",
-                    fontWeight: 700,
-                    color: tokens.textPrimary,
-                    margin: 0,
-                    marginBottom: 4,
-                  }}>
-                  Tell Us About Your Goal
-                </h3>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
-                    gap: 14,
-                  }}>
-                  <div>
-                    <label
-                      style={{
-                        fontSize: "0.7rem",
-                        color: tokens.textMuted,
-                        display: "block",
-                        marginBottom: 6,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                      }}>
-                      Full Name
-                    </label>
-                    <input
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      required
-                      placeholder="Your name"
-                      style={inputStyle}
-                    />
+                <div>
+                  <div
+                    style={{
+                      fontSize: "0.62rem",
+                      letterSpacing: "0.25em",
+                      textTransform: "uppercase",
+                      color: tokens.goldMid,
+                      fontWeight: 700,
+                      marginBottom: 6,
+                    }}>
+                    Fast Response
                   </div>
-                  <div>
-                    <label
-                      style={{
-                        fontSize: "0.7rem",
-                        color: tokens.textMuted,
-                        display: "block",
-                        marginBottom: 6,
-                        letterSpacing: "0.1em",
-                        textTransform: "uppercase",
-                      }}>
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      required
-                      placeholder="your@email.com"
-                      style={inputStyle}
-                    />
-                  </div>
+                  <h3
+                    style={{
+                      fontSize: "1.25rem",
+                      fontWeight: 700,
+                      color: tokens.textPrimary,
+                      margin: 0,
+                    }}>
+                    Book Free Gym Tour
+                  </h3>
                 </div>
 
                 <div>
-                  <label
+                  <label style={labelStyle}>Full Name</label>
+                  <input
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your full name"
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>
+                    Phone Number (WhatsApp Preferred)
+                  </label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                    placeholder="017XXXXXXXX"
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Preferred Outlet Branch</label>
+                  <select
+                    name="branch"
+                    value={currentBranch}
+                    onChange={handleChange}
+                    required
                     style={{
-                      fontSize: "0.7rem",
-                      color: tokens.textMuted,
-                      display: "block",
-                      marginBottom: 6,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
+                      ...inputStyle,
+                      appearance: "none",
+                      cursor: "pointer",
                     }}>
-                    Primary Goal
+                    <option value="lalbagh">Lalbagh Branch (Flagship)</option>
+                    <option value="dhanmondi">Dhanmondi Branch</option>
+                    <option value="mirpur">Mirpur Branch (Lift 11)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>
+                    Primary Fitness Goal / Intent
                   </label>
                   <select
                     name="goal"
                     value={form.goal}
                     onChange={handleChange}
                     required
-                    style={{ ...inputStyle, appearance: "none" }}>
-                    <option value="">Select your goal</option>
-                    <option value="fat-loss">Fat Loss</option>
-                    <option value="muscle">Muscle Building</option>
-                    <option value="performance">Athletic Performance</option>
-                    <option value="lifestyle">Lifestyle & Health</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label
-                    style={{
-                      fontSize: "0.7rem",
-                      color: tokens.textMuted,
-                      display: "block",
-                      marginBottom: 6,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                    }}>
-                    Your Message
-                  </label>
-                  <textarea
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    rows={4}
-                    placeholder="Tell Rayhaan where you're at and what's held you back..."
                     style={{
                       ...inputStyle,
-                      resize: "vertical",
-                      minHeight: 100,
-                    }}
-                  />
+                      appearance: "none",
+                      cursor: "pointer",
+                    }}>
+                    <option value="Free Gym Tour & Fitness Assessment">
+                      Free Gym Tour &amp; Fitness Assessment
+                    </option>
+                    <option value="Weight Loss">
+                      Weight Loss &amp; Fat Reduction
+                    </option>
+                    <option value="Muscle Gain">
+                      Muscle Gain &amp; Hypertrophy
+                    </option>
+                    <option value="General Fitness">
+                      General Fitness &amp; Strength
+                    </option>
+                    <option value="Female Fitness">
+                      Female Exclusive Training
+                    </option>
+                  </select>
                 </div>
 
                 <button
@@ -2067,10 +2887,31 @@ export function ContactSection() {
                     ...s.goldBtn,
                     textAlign: "center",
                     padding: "16px",
-                    marginTop: 4,
+                    marginTop: 6,
+                    cursor: "pointer",
+                    boxShadow: `0 8px 24px ${tokens.goldMid}25`,
                   }}>
-                  Book Free Call →
+                  Book Free Gym Tour →
                 </button>
+
+                <div style={{ marginTop: 8, textAlign: "center" }}>
+                  <a
+                    href={getGymTourWhatsAppUrl(currentBranch)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: "0.8rem",
+                      color: tokens.goldLight,
+                      textDecoration: "none",
+                      fontWeight: 600,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 6,
+                    }}>
+                    <span>💬</span> Prefer instant WhatsApp booking? Chat now →
+                  </a>
+                </div>
               </form>
             )}
           </div>
@@ -2087,9 +2928,23 @@ export function Footer() {
   const { isMobile, isTablet } = useResponsive();
 
   const links = {
-    Training: ["Start Here", "Programs", "Elite Track", "Online Coaching"],
-    Learn: ["Blog", "YouTube", "Free Resources", "Success Stories"],
-    Company: ["About", "Credentials", "Press Kit", "Privacy"],
+    Outlets: [
+      { label: "Lalbagh Flagship", href: "#outlets" },
+      { label: "Dhanmondi Branch", href: "#outlets" },
+      { label: "Mirpur Branch (Lift 11)", href: "#outlets" },
+    ],
+    Programs: [
+      { label: "Strength & Conditioning", href: "#packages" },
+      { label: "Female Fitness Program", href: "#female-fitness" },
+      { label: "Personal Training", href: "#packages" },
+      { label: "Diet & Workout Charts", href: "#faq" },
+    ],
+    Company: [
+      { label: "About Rayhan Fitness", href: "#about" },
+      { label: "Pricing & Plans", href: "#packages" },
+      { label: "FAQ", href: "#faq" },
+      { label: "Contact Hotline", href: "#contact" },
+    ],
   };
 
   const footerGridCols = isMobile
@@ -2103,7 +2958,8 @@ export function Footer() {
       style={{
         ...s.section,
         background: tokens.bgBase,
-        padding: isMobile ? "64px 0" : "96px 0",
+        padding: isMobile ? "64px 0 96px" : "96px 0",
+        borderTop: `1px solid ${tokens.borderSubtle}`,
       }}>
       <div
         style={{
@@ -2123,55 +2979,52 @@ export function Footer() {
           <div style={isMobile ? { gridColumn: "1 / -1" } : {}}>
             <Image
               src="/logo.png"
-              alt="Rayhaan Fitness"
+              alt="Rayhan Fitness"
               width={110}
               height={36}
               className="object-contain justify-self-start w-[100px] h-auto"
               priority
-            />{" "}
+            />
             <p
               style={{
                 fontSize: "0.85rem",
                 color: tokens.textMuted,
                 lineHeight: 1.7,
-                maxWidth: 260,
-                marginBottom: 24,
+                maxWidth: 280,
+                marginTop: 16,
+                marginBottom: 20,
               }}>
-              Coaching that respects your time, your body, and your ceiling.
-              Based in Dhaka. Training the world.
+              Home to national bodybuilding champions. 3 premier outlets across
+              Dhaka with international equipment and dedicated female hours.
             </p>
-            {/* Email signup */}
-            <div style={{ display: "flex", gap: 0, maxWidth: 300 }}>
-              <input
-                placeholder="Join the inner circle"
-                style={{
-                  flex: 1,
-                  background: tokens.bgSurface,
-                  border: `1px solid ${tokens.borderSubtle}`,
-                  borderRight: "none",
-                  borderRadius: "8px 0 0 8px",
-                  padding: "11px 14px",
-                  color: tokens.textPrimary,
-                  fontSize: "0.8rem",
-                  outline: "none",
-                  fontFamily: "inherit",
-                }}
-              />
-              <button
-                style={{
-                  background: tokens.goldMid,
-                  border: "none",
-                  borderRadius: "0 8px 8px 0",
-                  padding: "0 16px",
-                  color: tokens.textInverse,
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  letterSpacing: "0.08em",
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                }}>
-                Subscribe
-              </button>
+            <div
+              style={{
+                fontSize: "0.8rem",
+                color: tokens.textMuted,
+                display: "flex",
+                flexDirection: "column",
+                gap: 6,
+              }}>
+              <div>
+                Hotline:{" "}
+                <a
+                  href={PHONE_TEL}
+                  style={{
+                    color: tokens.goldLight,
+                    textDecoration: "none",
+                    fontWeight: 600,
+                  }}>
+                  {PHONE_NUMBER}
+                </a>
+              </div>
+              <div>
+                Email:{" "}
+                <a
+                  href={`mailto:${EMAIL}`}
+                  style={{ color: tokens.goldLight, textDecoration: "none" }}>
+                  {EMAIL}
+                </a>
+              </div>
             </div>
           </div>
 
@@ -2180,12 +3033,12 @@ export function Footer() {
             <div key={group}>
               <div
                 style={{
-                  fontSize: "0.62rem",
-                  letterSpacing: "0.28em",
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.25em",
                   textTransform: "uppercase",
                   color: tokens.goldMid,
-                  fontWeight: 600,
-                  marginBottom: 20,
+                  fontWeight: 700,
+                  marginBottom: 18,
                 }}>
                 {group}
               </div>
@@ -2199,9 +3052,9 @@ export function Footer() {
                   gap: 12,
                 }}>
                 {items.map((item) => (
-                  <li key={item}>
+                  <li key={item.label}>
                     <a
-                      href="#"
+                      href={item.href}
                       style={{
                         fontSize: "0.85rem",
                         color: tokens.textMuted,
@@ -2214,7 +3067,7 @@ export function Footer() {
                       onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) =>
                         (e.currentTarget.style.color = tokens.textMuted)
                       }>
-                      {item}
+                      {item.label}
                     </a>
                   </li>
                 ))}
@@ -2223,11 +3076,11 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Gold strip */}
+        {/* Gold divider */}
         <div
           style={{
             height: 1,
-            background: `linear-gradient(to right, transparent, ${tokens.goldMuted}55, transparent)`,
+            background: `linear-gradient(to right, transparent, ${tokens.borderSubtle}, transparent)`,
             marginBottom: 28,
           }}
         />
@@ -2238,23 +3091,24 @@ export function Footer() {
             display: "flex",
             flexDirection: isMobile ? "column" : "row",
             justifyContent: "space-between",
-            alignItems: isMobile ? "center" : "center",
+            alignItems: "center",
             gap: isMobile ? 12 : 0,
             textAlign: isMobile ? "center" : "left",
           }}>
           <span style={{ fontSize: "0.75rem", color: tokens.textMuted }}>
-            © 2025 Rayhaan Fitness. All rights reserved.
+            © 2025 Rayhan Fitness. All rights reserved.
           </span>
-          <div className="flex items-center gap-1">
-            Developed By
+          <div className="flex items-center gap-1.5 text-xs text-text-muted">
+            <span>Developed By</span>
             <a
               href="https://stellarworm.com"
               target="_blank"
-              rel="noopener noreferrer">
+              rel="noopener noreferrer"
+              className="inline-flex items-center">
               <img
                 src="/stellarLogo.png"
                 alt="Stellar Logo"
-                className="w-30 h-full"
+                className="w-24 h-auto opacity-80 hover:opacity-100 transition-opacity"
               />
             </a>
           </div>

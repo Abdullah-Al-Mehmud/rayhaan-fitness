@@ -130,10 +130,10 @@ export default function ProgramsSection() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   const tallHeight = isMobile ? 320 : isTablet ? 380 : 460;
-  const shortHeight = isMobile ? 320 : isTablet ? 300 : 360;
+  const shortHeight = isMobile ? 320 : isTablet ? 340 : 360;
 
-  /* Staggered offset: 2nd & 4th cards drop lower than 1st & 3rd */
-  const shortOffset = isMobile ? 64 : isTablet ? 120 : 160;
+  /* Staggered offset only on desktop: 2nd & 4th cards drop lower */
+  const shortOffset = isDesktop ? 160 : 0;
 
   return (
     <section
@@ -204,15 +204,17 @@ export default function ProgramsSection() {
           </p>
         </div>
 
-        {/* Card row */}
+        {/* Card row: 1 by 1 on mobile, 2 cols on tablet, 4 cols on desktop */}
         <div
           ref={gridRef}
           style={{
             display: "grid",
             gridTemplateColumns: isMobile
-              ? "1fr 1fr"
-              : `repeat(${PROGRAMS.length}, 1fr)`,
-            gap: isMobile ? 12 : 16,
+              ? "1fr"
+              : isTablet
+                ? "repeat(2, 1fr)"
+                : `repeat(${PROGRAMS.length}, 1fr)`,
+            gap: isMobile ? 20 : 16,
             alignItems: "start",
             opacity: gridInView ? 1 : 0,
             transform: gridInView ? "none" : "translateY(40px)",
@@ -220,7 +222,7 @@ export default function ProgramsSection() {
           }}>
           {PROGRAMS.map((p) => {
             const isHovered = hovered === p.id;
-            const height = isMobile ? 280 : p.tall ? tallHeight : shortHeight;
+            const height = isMobile ? 320 : isTablet ? 340 : p.tall ? tallHeight : shortHeight;
 
             return (
               <div
@@ -230,7 +232,7 @@ export default function ProgramsSection() {
                 style={{
                   position: "relative",
                   height,
-                  marginTop: !p.tall ? shortOffset : 0,
+                  marginTop: !p.tall && isDesktop ? shortOffset : 0,
                   borderRadius: 12,
                   overflow: "hidden",
                   border: `1px solid ${tokens.borderSubtle}`,
@@ -281,12 +283,12 @@ export default function ProgramsSection() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    padding: isMobile ? "16px 14px" : "20px 18px",
+                    padding: isMobile ? "22px 18px" : "20px 18px",
                   }}>
                   <p
                     style={{
                       margin: 0,
-                      fontSize: isMobile ? "0.85rem" : "1rem",
+                      fontSize: isMobile ? "1.2rem" : "1rem",
                       fontWeight: 800,
                       color: tokens.textPrimary,
                       lineHeight: 1.2,
@@ -295,8 +297,8 @@ export default function ProgramsSection() {
                   </p>
                   <p
                     style={{
-                      margin: "4px 0 0",
-                      fontSize: "0.7rem",
+                      margin: "6px 0 0",
+                      fontSize: isMobile ? "0.78rem" : "0.7rem",
                       letterSpacing: "0.04em",
                       color: tokens.goldLight,
                     }}>
