@@ -1,23 +1,69 @@
 "use client";
 
+import { BranchSelector } from "@/components/BranchSelector";
+import { useBranch } from "@/context/BranchContext";
+import { getGymTourWhatsAppUrl } from "@/data/gymData";
+import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const NAV_ITEMS = ["Home", "About", "Packages", "Review", "Contact"];
+interface NavItem {
+  label: string;
+  desktopLabel: string;
+  id: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Home", desktopLabel: "Home", id: "hero" },
+  { label: "Outlets & Facilities", desktopLabel: "Outlets", id: "outlets" },
+  { label: "Pricing & Offers", desktopLabel: "Pricing", id: "packages" },
+  {
+    label: "Female Fitness",
+    desktopLabel: "Female Fitness",
+    id: "female-fitness",
+  },
+  { label: "Trainers & Coaches", desktopLabel: "Trainers", id: "about" },
+  { label: "Gym Atmosphere & Gallery", desktopLabel: "Gallery", id: "gallery" },
+  { label: "Contact Us", desktopLabel: "Contact", id: "contact" },
+];
 
 export function Navbar() {
+  const { selectedBranch } = useBranch();
+  const whatsAppTourUrl = getGymTourWhatsAppUrl(selectedBranch);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState("Home");
+  const [activeNav, setActiveNav] = useState("hero");
 
-  const scrollToSection = (item: string) => {
-    const id = item.toLowerCase();
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const handleBookTourClick = (e: React.MouseEvent, location: string) => {
+    trackEvent("cta_book_gym_tour_click", { location, branch: selectedBranch });
+    const contactEl = document.getElementById("contact");
+    if (contactEl) {
+      e.preventDefault();
+      contactEl.scrollIntoView({ behavior: "smooth" });
+      window.dispatchEvent(
+        new CustomEvent("set_contact_intent", {
+          detail: {
+            goal: "Free Gym Tour & Fitness Assessment",
+            branch: selectedBranch,
+          },
+        }),
+      );
+    } else {
+      window.open(whatsAppTourUrl, "_blank", "noopener,noreferrer");
     }
-    setActiveNav(item);
+  };
+
+  const scrollToSection = (id: string) => {
+    if (id === "hero") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+    setActiveNav(id);
   };
 
   useEffect(() => {
@@ -44,9 +90,6 @@ export function Navbar() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             className="lg:hidden fixed inset-0 z-[99999] isolate"
-            // Solid, fully opaque color — no alpha channel, so nothing
-            // underneath (hero buttons, stats, images) can ever bleed
-            // through the overlay, even at 1% on some mobile GPUs.
             style={{ backgroundColor: "#0a0806" }}>
             <div
               className="absolute -top-20 -right-24 w-64 h-[110vh] -skew-x-[20deg] pointer-events-none"
@@ -77,34 +120,34 @@ export function Navbar() {
               </svg>
             </button>
 
-            <nav className="absolute inset-0 flex flex-col justify-center pl-10 gap-1">
+            <nav className="absolute inset-0 flex flex-col justify-center pl-8 sm:pl-12 pr-6 gap-2">
               <span
-                className="text-[0.6rem] tracking-[0.35em] uppercase mb-6"
+                className="text-[0.6rem] tracking-[0.35em] uppercase mb-4"
                 style={{ color: "var(--gold-mid)", opacity: 0.7 }}>
                 Navigation
               </span>
               {NAV_ITEMS.map((item, i) => (
                 <button
-                  key={item}
+                  key={item.id}
                   onClick={() => {
-                    scrollToSection(item);
+                    scrollToSection(item.id);
                     setMobileMenuOpen(false);
                   }}
-                  className="group text-left relative w-fit ">
+                  className="group text-left relative w-fit">
                   <span
                     className="absolute -left-6 top-1/2 -translate-y-1/2 text-[0.6rem] font-mono"
                     style={{ color: "var(--gold-mid)", opacity: 0.5 }}>
                     0{i + 1}
                   </span>
                   <span
-                    className={`block text-[2.6rem] sm:text-[3.2rem] font-bold leading-tight tracking-tight transition-colors duration-200 ${
-                      activeNav === item
+                    className={`block text-[1.8rem] sm:text-[2.6rem] font-bold leading-tight tracking-tight transition-colors duration-200 ${
+                      activeNav === item.id
                         ? "text-transparent bg-clip-text"
                         : "text-text-primary group-hover:text-transparent group-hover:bg-clip-text"
                     }`}
                     style={{
                       WebkitTextStroke:
-                        activeNav === item
+                        activeNav === item.id
                           ? "0px"
                           : "1px rgba(255,255,255,0.15)",
                       backgroundImage:
@@ -112,9 +155,9 @@ export function Navbar() {
                       WebkitBackgroundClip: "text",
                       backgroundClip: "text",
                     }}>
-                    {item}
+                    {item.label}
                   </span>
-                  {activeNav === item && (
+                  {activeNav === item.id && (
                     <div
                       className="h-px w-full mt-0.5"
                       style={{ background: "var(--gold-mid)" }}
@@ -122,6 +165,24 @@ export function Navbar() {
                   )}
                 </button>
               ))}
+
+              <div className="mt-6 flex flex-col gap-4">
+                <span className="text-[0.6rem] tracking-[0.2em] uppercase text-text-muted">
+                  Select Outlet Branch:
+                </span>
+                <BranchSelector compact />
+
+                <a
+                  href="#contact"
+                  onClick={(e) => {
+                    setMobileMenuOpen(false);
+                    handleBookTourClick(e, "navbar_mobile_menu");
+                  }}
+                  aria-label="Book a free gym tour and fitness assessment"
+                  className="mt-2 text-center bg-gold-mid text-text-inverse font-bold text-[0.8rem] tracking-wider uppercase py-3.5 px-4 rounded-sm shadow-md active:bg-gold-deep transition-colors">
+                  Book Free Gym Tour
+                </a>
+              </div>
             </nav>
           </motion.div>
         )}
@@ -131,44 +192,59 @@ export function Navbar() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className={`fixed top-0 left-0 right-0 z-[999] px-4 sm:px-6 lg:px-[180px] transition-all duration-300 ${
-          scrolled ? "bg-background-base/90 backdrop-blur-md shadow-lg" : ""
+        className={`fixed top-0 left-0 right-0 z-[999] px-4 sm:px-6 lg:px-8 xl:px-16 transition-all duration-300 ${
+          scrolled
+            ? "bg-background-base/95 backdrop-blur-md shadow-lg"
+            : "bg-gradient-to-b from-black/80 to-transparent"
         }`}>
-        <div className="grid grid-cols-2 md:grid-cols-3 items-center py-4 lg:py-5 px-5 md:px-0">
-          <Image
-            src="/logo.png"
-            alt="Rayhaan Fitness"
-            width={80}
-            height={26}
-            className="object-contain justify-self-start w-[70px] h-auto"
-            priority
-          />
+        <div className="max-w-7xl mx-auto flex items-center justify-between py-4 lg:py-5">
+          <div
+            className="cursor-pointer"
+            onClick={() => scrollToSection("hero")}>
+            <Image
+              src="/logo.png"
+              alt="Rayhan Fitness"
+              width={80}
+              height={26}
+              className="object-contain w-[72px] h-auto"
+              priority
+            />
+          </div>
 
-          <nav className="hidden lg:flex justify-center gap-6">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7">
             {NAV_ITEMS.map((item) => (
               <button
-                key={item}
-                onClick={() => scrollToSection(item)}
-                className={`px-3 text-[0.8rem] font-bold tracking-[0.2em] uppercase transition-colors cursor-pointer duration-200 ${
-                  activeNav === item
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`text-[0.75rem] xl:text-[0.8rem] font-bold tracking-[0.15em] uppercase transition-colors cursor-pointer duration-200 ${
+                  activeNav === item.id
                     ? "text-gold-mid"
-                    : "text-text-primary/60 hover:text-gold-mid"
+                    : "text-text-primary/70 hover:text-gold-mid"
                 }`}>
-                {item}
+                {item.desktopLabel}
               </button>
             ))}
           </nav>
 
-          <div className="justify-self-end flex items-center">
-            <button className="hidden lg:inline-flex bg-gold-mid text-text-inverse font-semibold text-[0.7rem] tracking-wider uppercase px-5 py-2.5 rounded-sm hover:bg-gold-deep transition-colors duration-300">
-              Buy Package
-            </button>
+          <div className="flex items-center gap-3">
+            <div className="hidden xl:block">
+              <BranchSelector compact />
+            </div>
+
+            <a
+              href="#contact"
+              onClick={(e) => handleBookTourClick(e, "navbar")}
+              aria-label="Book a free gym tour and fitness assessment"
+              className="hidden lg:inline-flex bg-gold-mid text-text-inverse font-bold text-[0.7rem] xl:text-[0.75rem] tracking-wider uppercase px-4 xl:px-5 py-2.5 rounded-sm hover:bg-gold-deep active:bg-gold-deep transition-colors duration-300 shadow-md">
+              <span className="hidden xl:inline">Book Free Gym Tour</span>
+              <span className="xl:hidden">Book Free Gym Tour</span>
+            </a>
 
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
-              className="relative lg:hidden z-[999] flex items-center justify-center w-10 h-10 ml-auto -mr-4 sm:-mr-6">
+              className="relative lg:hidden z-[999] flex items-center justify-center w-10 h-10 ml-auto -mr-2">
               <span
                 className={`absolute flex flex-col justify-center items-end gap-[5px] transition-all duration-300 ${
                   mobileMenuOpen
