@@ -138,8 +138,7 @@ export function HeroSection() {
 
   const headingLines = [
     { text: "Transform Your Body,", isGold: false },
-    { text: "Elevate Your", isGold: false },
-    { text: "LIFE", isGold: true },
+    { text: "Elevate Your LIFE", isGold: false, goldWord: "LIFE" },
   ];
 
   const stats = [
@@ -154,23 +153,23 @@ export function HeroSection() {
       className="hero-section relative w-full min-h-screen flex flex-col lg:flex-row overflow-hidden bg-background-base">
       {/* ── BOTTOM GRADIENT OVERLAYS ── */}
       <div
-        className="absolute inset-x-0 bottom-0 w-full h-1/2 pointer-events-none z-40"
+        className="absolute inset-x-0 bottom-0 w-full h-1/2 pointer-events-none z-[1]"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 100%)",
+            "linear-gradient(to top, rgba(0,0,0,0.28) 0%, transparent 100%)",
         }}
       />
       <div
-        className="hidden lg:block absolute inset-x-0 bottom-0 w-full h-3/5 pointer-events-none z-40"
+        className="hidden lg:block absolute inset-x-0 bottom-0 w-full h-3/5 pointer-events-none z-[1]"
         style={{
           background:
-            "linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 100%)",
+            "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 100%)",
         }}
       />
 
       {/* ── GHOST TEXT ── */}
       <div
-        className="absolute z-30 inset-0 overflow-hidden pointer-events-none select-none"
+        className="absolute z-[1] inset-0 overflow-hidden pointer-events-none select-none"
         aria-hidden="true">
         <span
           className="ghost-text absolute top-[20vh] lg:top-[.4em] left-0 right-0 text-center lg:text-left lg:left-80 text-[clamp(6rem,20vw,18rem)] font-black leading-none text-white/[0.08] lg:text-white/5"
@@ -185,7 +184,7 @@ export function HeroSection() {
       </div>
 
       {/* ========== LEFT CONTENT PANEL ========== */}
-      <div className="relative z-10 w-full lg:w-[40%] flex flex-col justify-center px-6 sm:px-8 md:px-12 lg:pl-36 lg:pr-12 xl:pl-44 xl:pr-16 pt-10 pb-8 lg:pb-0 lg:pt-32 order-2 lg:order-1">
+      <div className="relative z-10 w-full lg:w-[52%] flex flex-col justify-center px-4 sm:px-6 lg:pl-[max(2rem,calc((100vw-92.5rem)/2))] lg:pr-4 xl:pl-[max(4rem,calc((100vw-92.5rem)/2))] xl:pr-8 pt-10 pb-8 lg:pb-0 lg:pt-32 order-2 lg:order-1">
         <div
           className="absolute bottom-0 left-0 w-72 sm:w-96 h-72 sm:h-96 pointer-events-none"
           style={{
@@ -211,10 +210,17 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.3 + i * 0.15 }}
-              className={`text-[2.5rem] sm:text-5xl md:text-6xl font-bold leading-[1.05] sm:leading-none ${
-                line.isGold ? "text-gold-light italic" : "text-text-primary"
-              }`}>
-              {line.text}
+              className="whitespace-nowrap text-[2.1rem] sm:text-5xl lg:text-[2.6rem] xl:text-5xl 2xl:text-6xl font-bold tracking-tight leading-[1.05] sm:leading-none text-text-primary">
+              {"goldWord" in line && line.goldWord ? (
+                <>
+                  {line.text.replace(line.goldWord, "").trimEnd()}{" "}
+                  <span className="text-gold-light not-italic">
+                    {line.goldWord}
+                  </span>
+                </>
+              ) : (
+                line.text
+              )}
             </motion.h1>
           ))}
         </div>
@@ -239,15 +245,13 @@ export function HeroSection() {
             onClick={handlePrimaryCtaClick}
             aria-label="Book a free gym tour and fitness assessment"
             ref={primaryBtnRef}
-            onMouseEnter={() => handleBtnHover(primaryBtnRef)}
-            onMouseLeave={() => handleBtnLeave(primaryBtnRef)}
-            className="bg-gold-mid text-text-inverse font-bold px-5 sm:px-8 py-3.5 sm:py-4 hover:bg-gold-deep active:bg-gold-deep transition-colors duration-300 rounded-sm inline-flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto text-[0.95rem] sm:text-base text-center shadow-lg shadow-gold-mid/20">
+            className="group bg-[#D4A843] hover:bg-[#e0b754] text-[#0F0D0A] font-extrabold px-6 sm:px-8 py-3.5 sm:py-4 active:scale-98 transition-all duration-200 rounded-md inline-flex items-center justify-center gap-2.5 cursor-pointer w-full sm:w-auto text-[0.95rem] sm:text-base text-center border border-[#e5bb55]">
             <span className="sm:hidden">Book Free Tour</span>
             <span className="hidden sm:inline lg:hidden">
               Book Free Gym Tour
             </span>
             <span className="hidden lg:inline">Book Free Gym Tour</span>
-            <span className="inline-block transition-transform group-hover:translate-x-1">
+            <span className="inline-block transition-transform group-hover:translate-x-1.5 font-bold">
               →
             </span>
           </a>
@@ -263,13 +267,11 @@ export function HeroSection() {
               })
             }
             ref={mobileBtnRef}
-            onMouseEnter={() => handleBtnHover(mobileBtnRef)}
-            onMouseLeave={() => handleBtnLeave(mobileBtnRef)}
-            className="border border-border-default text-gold-mid px-6 sm:px-8 py-3.5 sm:py-4 hover:bg-background-overlay active:bg-background-overlay transition-colors duration-300 rounded-sm inline-flex items-center justify-center gap-2 cursor-pointer w-full sm:w-auto text-[0.95rem] sm:text-base text-center">
+            className="group bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold px-6 sm:px-8 py-3.5 sm:py-4 active:scale-98 transition-all duration-200 rounded-md inline-flex items-center justify-center gap-2.5 cursor-pointer w-full sm:w-auto text-[0.95rem] sm:text-base text-center border border-[#30e272]">
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-4 h-4 shrink-0">
+              className="w-5 h-5 shrink-0 text-white">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
             </svg>
             Chat on WhatsApp
@@ -297,12 +299,12 @@ export function HeroSection() {
       </div>
 
       {/* ========== RIGHT VISUAL PANEL — DESKTOP ========== */}
-      <div className="hidden lg:block relative w-[60%] min-h-screen overflow-hidden  order-1 lg:order-2">
+      <div className="hidden lg:block relative w-[48%] min-h-screen overflow-hidden  order-1 lg:order-2">
         {/* Gold-light strip (bottom layer) */}
         <div className="gold-strip-2 pointer-events-none absolute inset-y-0 left-[28%] w-[55%] -skew-x-[28deg] origin-left bg-[#181511] z-0" />
 
         {/* Hero image (middle layer) */}
-        <div className="hero-image-wrapper absolute inset-0 z-40 -left-20 overflow-hidden">
+        <div className="hero-image-wrapper absolute inset-0 z-40 -left-56 overflow-hidden">
           <Image
             src="/hero.png"
             alt="Elite athlete"

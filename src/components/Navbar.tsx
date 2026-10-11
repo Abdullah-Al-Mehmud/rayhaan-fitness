@@ -16,7 +16,6 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", desktopLabel: "Home", id: "hero" },
-  { label: "Outlets & Facilities", desktopLabel: "Outlets", id: "outlets" },
   { label: "Pricing & Offers", desktopLabel: "Pricing", id: "packages" },
   {
     label: "Female Fitness",
@@ -24,7 +23,6 @@ const NAV_ITEMS: NavItem[] = [
     id: "female-fitness",
   },
   { label: "Trainers & Coaches", desktopLabel: "Trainers", id: "about" },
-  { label: "Gym Atmosphere & Gallery", desktopLabel: "Gallery", id: "gallery" },
   { label: "Contact Us", desktopLabel: "Contact", id: "contact" },
 ];
 
@@ -167,11 +165,6 @@ export function Navbar() {
               ))}
 
               <div className="mt-6 flex flex-col gap-4">
-                <span className="text-[0.6rem] tracking-[0.2em] uppercase text-text-muted">
-                  Select Outlet Branch:
-                </span>
-                <BranchSelector compact />
-
                 <a
                   href="#contact"
                   onClick={(e) => {
@@ -197,7 +190,7 @@ export function Navbar() {
             ? "bg-background-base/95 backdrop-blur-md shadow-lg"
             : "bg-gradient-to-b from-black/80 to-transparent"
         }`}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between py-4 lg:py-5">
+        <div className="max-w-[92.5rem] mx-auto flex items-center justify-between py-4 lg:py-5">
           <div
             className="cursor-pointer"
             onClick={() => scrollToSection("hero")}>
@@ -227,10 +220,6 @@ export function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="hidden xl:block">
-              <BranchSelector compact />
-            </div>
-
             <a
               href="#contact"
               onClick={(e) => handleBookTourClick(e, "navbar")}

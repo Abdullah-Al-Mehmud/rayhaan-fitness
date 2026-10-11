@@ -255,37 +255,105 @@ export function FemaleFitnessSection() {
     },
   ];
 
+  const femaleStats = [
+    { label: "Daily Slot", val: "1:00 - 3:00 PM" },
+    { label: "Female Staff", val: "100% Floor Presence" },
+    { label: "Coaching", val: "Certified Female Mentors" },
+    { label: "Privacy", val: "Full Locker Privacy" },
+  ];
+
   return (
     <section
       id="female-fitness"
+      className="relative overflow-hidden"
       style={{
         ...s.section,
-        background: tokens.bgWarm,
-        padding: isMobile ? "64px 0" : "96px 0",
+        background: "linear-gradient(180deg, #1C1810 0%, #120F0B 100%)",
+        padding: isMobile ? "64px 0" : "100px 0",
         borderTop: `1px solid ${tokens.borderSubtle}`,
         borderBottom: `1px solid ${tokens.borderSubtle}`,
       }}>
+      {/* Background ambient rose/gold glow */}
+      <div
+        className="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] pointer-events-none opacity-15 blur-[120px] rounded-full"
+        style={{
+          background: "radial-gradient(circle, #F472B6 0%, #D4A843 40%, transparent 70%)",
+        }}
+        aria-hidden="true"
+      />
+
       <div
         style={{
           maxWidth: 1280,
           margin: "0 auto",
           padding: `0 ${isMobile ? 20 : 32}px`,
-        }}>
+        }}
+        className="relative z-10">
         <div style={{ textAlign: "center", marginBottom: isMobile ? 36 : 56 }}>
-          <span style={s.label}>Women&apos;s Safe Zone</span>
-          <h2 style={s.heading}>
-            Safe, Empowering &amp;
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#F472B6]/40 bg-[#F472B6]/10 backdrop-blur-md mb-4 shadow-[0_0_15px_rgba(244,114,182,0.15)]">
+            <span className="w-2 h-2 rounded-full bg-[#F472B6] animate-pulse" />
+            <span className="text-[0.68rem] tracking-[0.25em] uppercase font-extrabold text-[#F472B6]">
+              WOMEN&apos;S EXCLUSIVE SAFE ZONE
+            </span>
+          </div>
+
+          <h2 style={{ ...s.heading, fontSize: isMobile ? "2rem" : "3rem" }}>
+            Empowering &amp; Completely Private
             <br />
-            <span style={{ color: tokens.goldLight }}>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F472B6] via-[#E8C060] to-[#D4A843]">
               Dedicated Fitness for Women
             </span>
           </h2>
-          <p style={{ ...s.sub, maxWidth: 540, margin: "16px auto 0" }}>
-            A secure, empowering environment where you can train with complete
-            privacy, certified female trainers, and tailored nutrition plans.
+          <p style={{ ...s.sub, maxWidth: 580, margin: "18px auto 0" }}>
+            Train with 100% privacy, experienced certified female coaches, private changing facilities, and tailored nutrition blueprints across all 3 Dhaka outlets.
           </p>
         </div>
 
+        {/* Highlight Banner / Image & Stats Showcase */}
+        <div className="mb-12 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-[#252018]/80 border border-[#D4A843]/30 rounded-2xl p-6 sm:p-8 backdrop-blur-md shadow-2xl">
+          <div className="lg:col-span-5 relative h-64 sm:h-80 rounded-xl overflow-hidden border border-[#3D3528]">
+            <img
+              src="/images/gallery/female-training-zone.webp"
+              alt="Women Safe Zone Rayhan Fitness"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F0D0A]/90 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4">
+              <span className="text-[0.65rem] tracking-[0.2em] uppercase font-bold text-[#F472B6] bg-black/60 px-3 py-1 rounded-full border border-[#F472B6]/40">
+                100% Female Floor Reserved
+              </span>
+              <p className="text-white font-bold text-sm sm:text-base mt-2">
+                Daily 1:00 PM – 3:00 PM Exclusive Slot
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:col-span-7 flex flex-col justify-between h-full">
+            <div>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#F0EAD6] mb-3">
+                Train With Absolute Comfort &amp; Zero Interruption
+              </h3>
+              <p className="text-[#8C7A5A] text-sm sm:text-base leading-relaxed mb-6">
+                Our Women&apos;s Safe Zone guarantees a respectful, supportive space. From dedicated equipment access to personalized guidance by certified female nutritionists and fitness coaches, your transformation is handled with expert care.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 border-t border-[#3D3528]">
+              {femaleStats.map((st, i) => (
+                <div key={i} className="bg-[#1C1810] border border-[#3D3528] rounded-lg p-3 text-center">
+                  <div className="text-[0.6rem] uppercase tracking-wider text-[#F472B6] font-semibold mb-1">
+                    {st.label}
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#F0EAD6]">
+                    {st.val}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Pillars Cards */}
         <div
           ref={ref}
           style={{
@@ -303,8 +371,9 @@ export function FemaleFitnessSection() {
           {pillars.map((pillar, i) => (
             <div
               key={i}
+              className="group hover:border-[#F472B6]/50 hover:shadow-[0_10px_30px_rgba(244,114,182,0.12)] transition-all duration-300"
               style={{
-                background: tokens.bgSurface,
+                background: "linear-gradient(145deg, #2E2A22 0%, #221E18 100%)",
                 border: `1px solid ${tokens.borderSubtle}`,
                 borderRadius: 18,
                 padding: "36px 28px",
@@ -320,9 +389,10 @@ export function FemaleFitnessSection() {
                   width: 52,
                   height: 52,
                   borderRadius: 14,
-                  background: `${tokens.goldMid}20`,
-                  color: tokens.goldLight,
+                  background: "rgba(244, 114, 182, 0.15)",
+                  color: "#F472B6",
                   marginBottom: 20,
+                  border: "1px solid rgba(244, 114, 182, 0.3)",
                 }}>
                 {pillar.icon}
               </div>
@@ -333,11 +403,11 @@ export function FemaleFitnessSection() {
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
                   fontWeight: 700,
-                  color: tokens.goldMid,
-                  background: `${tokens.goldMid}15`,
-                  border: `1px solid ${tokens.goldMid}30`,
+                  color: "#F472B6",
+                  background: "rgba(244, 114, 182, 0.1)",
+                  border: "1px solid rgba(244, 114, 182, 0.25)",
                   borderRadius: 9999,
-                  padding: "3px 12px",
+                  padding: "4px 12px",
                   marginBottom: 12,
                 }}>
                 {pillar.badge}
@@ -364,17 +434,16 @@ export function FemaleFitnessSection() {
           ))}
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 44 }}>
+        <div style={{ textAlign: "center", marginTop: 48 }}>
           <a
             href={`${WHATSAPP_BASE_URL}?text=${WHATSAPP_FEMALE_PREFILLED}`}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              ...s.goldBtn,
-              padding: "16px 36px",
-              textDecoration: "none",
-            }}>
-            Join Female Fitness Program →
+            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-[#D4A843] hover:bg-[#e0b754] text-[#0F0D0A] font-extrabold text-sm sm:text-base uppercase tracking-wider hover:scale-105 active:scale-95 transition-all duration-200 text-decoration-none border border-[#e5bb55]">
+            <svg className="w-5 h-5 fill-current text-[#0F0D0A]" viewBox="0 0 24 24">
+              <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.97.58 3.84 1.6 5.43L2 22l4.81-1.68c1.53.94 3.31 1.48 5.23 1.48 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.78 14.07c-.24.68-1.4 1.25-1.92 1.33-.52.08-1.18.12-3.41-.75-2.85-1.11-4.69-3.99-4.83-4.18-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.09 1-2.37.26-.28.58-.35.77-.35.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .89 2.15.07.15.12.33.02.53-.1.2-.15.32-.3.49-.15.17-.32.38-.46.51-.15.14-.3.3-.13.6.18.3.78 1.29 1.68 2.09 1.15 1.03 2.13 1.35 2.43 1.5.3.15.48.13.66-.08.18-.21.78-.91.99-1.22.21-.31.42-.26.7-.15.28.11 1.78.84 2.08.99.3.15.51.23.58.35.08.13.08.73-.16 1.41z"/>
+            </svg>
+            <span>Join Female Fitness Program →</span>
           </a>
         </div>
       </div>
@@ -1027,6 +1096,12 @@ export function InstagramFeedSection() {
 export function BentoSection() {
   const [ref, inView] = useInView("-60px");
   const [hovered, setHovered] = useState<number | null>(null);
+  const [activeModalImg, setActiveModalImg] = useState<{
+    src: string;
+    title: string;
+    tag?: string;
+    desc?: string | null;
+  } | null>(null);
   const { isMobile, isTablet } = useResponsive();
 
   const cells = [
@@ -1161,6 +1236,14 @@ export function BentoSection() {
                 key={cell.id}
                 onMouseEnter={() => setHovered(cell.id)}
                 onMouseLeave={() => setHovered(null)}
+                onClick={() =>
+                  setActiveModalImg({
+                    src: cell.src,
+                    title: cell.title,
+                    tag: cell.tag,
+                    desc: cell.desc,
+                  })
+                }
                 style={{
                   gridColumn: sp.gridColumn,
                   gridRow: sp.gridRow,
@@ -1304,6 +1387,14 @@ export function BentoSection() {
 
           {/* Full-width bottom image */}
           <div
+            onClick={() =>
+              setActiveModalImg({
+                src: DEMO.gym1,
+                title: "6 Training Disciplines — One System",
+                tag: "Facilities",
+                desc: "State-of-the-art training atmosphere.",
+              })
+            }
             style={{
               gridColumn: isMobile ? "1 / 2" : isTablet ? "1 / 3" : "1 / 4",
               gridRow: isMobile ? "7 / 8" : isTablet ? "4 / 5" : "3 / 4",
@@ -1312,6 +1403,7 @@ export function BentoSection() {
               position: "relative",
               border: `1px solid ${tokens.borderSubtle}`,
               minHeight: isMobile ? 200 : 220,
+              cursor: "pointer",
             }}>
             <img
               src={DEMO.gym1}
@@ -1383,6 +1475,42 @@ export function BentoSection() {
           </span>
         </div>
       </div>
+
+      {/* Lightbox Pop-up Modal for Bento Section */}
+      {activeModalImg && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/92 backdrop-blur-xl p-4 sm:p-8 cursor-zoom-out select-none"
+          onClick={() => setActiveModalImg(null)}>
+          <button
+            onClick={() => setActiveModalImg(null)}
+            className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-[#1C1810] border border-[#3D3528] text-white hover:text-[#E8C060] hover:border-[#D4A843] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xl"
+            aria-label="Close modal">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div
+            className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center cursor-default"
+            onClick={(e) => e.stopPropagation()}>
+            <img
+              src={activeModalImg.src}
+              alt={activeModalImg.title}
+              className="max-h-[75vh] w-auto max-w-full object-contain rounded-xl border border-white/10 shadow-2xl"
+            />
+            <div className="mt-4 text-center">
+              {activeModalImg.tag && (
+                <span className="text-[0.65rem] tracking-[0.2em] uppercase font-bold text-[#D4A843] bg-[#2E2A22] px-3 py-1 rounded-full border border-[#3D3528] mr-2">
+                  {activeModalImg.tag}
+                </span>
+              )}
+              <span className="text-lg font-bold text-[#F0EAD6]">{activeModalImg.title}</span>
+              {activeModalImg.desc && (
+                <p className="text-xs text-[#8C7A5A] mt-1">{activeModalImg.desc}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1624,7 +1752,10 @@ export function OutletLocationsSection() {
                       style={{
                         flex: 1,
                         padding: "10px 0",
-                        textAlign: "center",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
                         fontSize: "0.72rem",
                         fontWeight: 600,
                         letterSpacing: "0.05em",
@@ -1635,7 +1766,10 @@ export function OutletLocationsSection() {
                         borderRadius: 8,
                         textDecoration: "none",
                       }}>
-                      🗺️ Directions
+                      <svg className="w-4 h-4 text-[#EA4335]" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      </svg>
+                      <span>Directions</span>
                     </a>
                     <a
                       href={b.phoneTel}
@@ -2714,200 +2848,82 @@ export function ContactSection() {
             </div>
           </div>
 
-          {/* Right form card */}
+          {/* Right action showcase card (Contact form temporarily commented out as requested) */}
           <div
-            style={{
-              background: tokens.bgSurface,
-              border: `1px solid ${tokens.borderSubtle}`,
-              borderRadius: 24,
-              padding: isMobile ? 28 : 44,
-            }}>
-            {sent ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  height: "100%",
-                  textAlign: "center",
-                  minHeight: 360,
-                }}>
-                <div
-                  style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: "50%",
-                    background: `${tokens.goldMid}22`,
-                    color: tokens.goldLight,
-                    border: `1.5px solid ${tokens.goldMid}`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    marginBottom: 20,
-                    fontSize: "1.8rem",
-                    fontWeight: 700,
-                  }}>
-                  ✓
-                </div>
-                <h3
-                  style={{
-                    color: tokens.goldLight,
-                    fontWeight: 700,
-                    fontSize: "1.4rem",
-                    marginBottom: 10,
-                  }}>
-                  Tour &amp; Assessment Request Received!
-                </h3>
-                <p
-                  style={{
-                    color: tokens.textMuted,
-                    fontSize: "0.9rem",
-                    maxWidth: 320,
-                    lineHeight: 1.6,
-                  }}>
-                  Thank you, {form.name || "friend"}! A coach from our{" "}
-                  {currentBranch} outlet will call you shortly at {form.phone}{" "}
-                  to confirm your free gym tour and fitness assessment slot.
-                </p>
+            className="relative overflow-hidden bg-[#252018]/90 border border-[#D4A843]/40 rounded-3xl p-6 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl flex flex-col justify-between">
+            {/* Ambient gold glow accent */}
+            <div
+              className="absolute -top-16 -right-16 w-56 h-56 bg-[#D4A843]/15 rounded-full blur-3xl pointer-events-none"
+              aria-hidden="true"
+            />
+
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4A843]/15 border border-[#D4A843]/30 mb-4">
+                <span className="w-2 h-2 rounded-full bg-[#E8C060] animate-pulse" />
+                <span className="text-[0.62rem] tracking-[0.25em] uppercase font-bold text-[#E8C060]">
+                  INSTANT GYM TOUR ACCESS
+                </span>
               </div>
-            ) : (
-              <form
-                onSubmit={handleSubmit}
-                style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-                <div>
-                  <div
-                    style={{
-                      fontSize: "0.62rem",
-                      letterSpacing: "0.25em",
-                      textTransform: "uppercase",
-                      color: tokens.goldMid,
-                      fontWeight: 700,
-                      marginBottom: 6,
-                    }}>
-                    Fast Response
-                  </div>
-                  <h3
-                    style={{
-                      fontSize: "1.25rem",
-                      fontWeight: 700,
-                      color: tokens.textPrimary,
-                      margin: 0,
-                    }}>
-                    Book Free Gym Tour
-                  </h3>
-                </div>
 
-                <div>
-                  <label style={labelStyle}>Full Name</label>
-                  <input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter your full name"
-                    style={inputStyle}
-                  />
-                </div>
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-[#F0EAD6] leading-tight mb-3">
+                Book Your Free Gym Tour &amp; Fitness Assessment
+              </h3>
 
-                <div>
-                  <label style={labelStyle}>
-                    Phone Number (WhatsApp Preferred)
-                  </label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    required
-                    placeholder="017XXXXXXXX"
-                    style={inputStyle}
-                  />
-                </div>
+              <p className="text-[#8C7A5A] text-sm leading-relaxed mb-6">
+                Step inside Rayhan Fitness to inspect our world-class imported biomechanics equipment, experience our dedicated female workout floor, and receive a complimentary body composition assessment with our head trainers.
+              </p>
 
-                <div>
-                  <label style={labelStyle}>Preferred Outlet Branch</label>
-                  <select
-                    name="branch"
-                    value={currentBranch}
-                    onChange={handleChange}
-                    required
-                    style={{
-                      ...inputStyle,
-                      appearance: "none",
-                      cursor: "pointer",
-                    }}>
-                    <option value="lalbagh">Lalbagh Branch (Flagship)</option>
-                    <option value="dhanmondi">Dhanmondi Branch</option>
-                    <option value="mirpur">Mirpur Branch (Lift 11)</option>
-                  </select>
+              {/* Assessment Inclusions */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#1C1810] border border-[#3D3528]">
+                  <span className="w-6 h-6 rounded-full bg-[#D4A843]/20 text-[#E8C060] flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  <span className="text-xs text-[#F0EAD6] font-medium">Free InBody Assessment</span>
                 </div>
-
-                <div>
-                  <label style={labelStyle}>
-                    Primary Fitness Goal / Intent
-                  </label>
-                  <select
-                    name="goal"
-                    value={form.goal}
-                    onChange={handleChange}
-                    required
-                    style={{
-                      ...inputStyle,
-                      appearance: "none",
-                      cursor: "pointer",
-                    }}>
-                    <option value="Free Gym Tour & Fitness Assessment">
-                      Free Gym Tour &amp; Fitness Assessment
-                    </option>
-                    <option value="Weight Loss">
-                      Weight Loss &amp; Fat Reduction
-                    </option>
-                    <option value="Muscle Gain">
-                      Muscle Gain &amp; Hypertrophy
-                    </option>
-                    <option value="General Fitness">
-                      General Fitness &amp; Strength
-                    </option>
-                    <option value="Female Fitness">
-                      Female Exclusive Training
-                    </option>
-                  </select>
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#1C1810] border border-[#3D3528]">
+                  <span className="w-6 h-6 rounded-full bg-[#D4A843]/20 text-[#E8C060] flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  <span className="text-xs text-[#F0EAD6] font-medium">Full Equipment Walkthrough</span>
                 </div>
-
-                <button
-                  type="submit"
-                  style={{
-                    ...s.goldBtn,
-                    textAlign: "center",
-                    padding: "16px",
-                    marginTop: 6,
-                    cursor: "pointer",
-                    boxShadow: `0 8px 24px ${tokens.goldMid}25`,
-                  }}>
-                  Book Free Gym Tour →
-                </button>
-
-                <div style={{ marginTop: 8, textAlign: "center" }}>
-                  <a
-                    href={getGymTourWhatsAppUrl(currentBranch)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      fontSize: "0.8rem",
-                      color: tokens.goldLight,
-                      textDecoration: "none",
-                      fontWeight: 600,
-                      display: "inline-flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                    }}>
-                    <span>💬</span> Prefer instant WhatsApp booking? Chat now →
-                  </a>
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#1C1810] border border-[#3D3528]">
+                  <span className="w-6 h-6 rounded-full bg-[#D4A843]/20 text-[#E8C060] flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  <span className="text-xs text-[#F0EAD6] font-medium">Custom Workout Blueprint</span>
                 </div>
-              </form>
-            )}
+                <div className="flex items-center gap-2.5 p-3 rounded-xl bg-[#1C1810] border border-[#3D3528]">
+                  <span className="w-6 h-6 rounded-full bg-[#D4A843]/20 text-[#E8C060] flex items-center justify-center text-xs font-bold shrink-0">✓</span>
+                  <span className="text-xs text-[#F0EAD6] font-medium">Diet &amp; Macro Advice</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Instant Action Buttons */}
+            <div className="flex flex-col gap-3.5 pt-4 border-t border-[#3D3528]">
+              <a
+                href={getGymTourWhatsAppUrl(currentBranch)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 px-6 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-extrabold text-sm sm:text-base tracking-wider uppercase flex items-center justify-center gap-3 transition-all duration-200 active:scale-98 border border-[#30e272]">
+                <svg className="w-5 h-5 fill-current text-white" viewBox="0 0 24 24">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.97.58 3.84 1.6 5.43L2 22l4.81-1.68c1.53.94 3.31 1.48 5.23 1.48 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.78 14.07c-.24.68-1.4 1.25-1.92 1.33-.52.08-1.18.12-3.41-.75-2.85-1.11-4.69-3.99-4.83-4.18-.14-.19-1.16-1.54-1.16-2.94 0-1.4.73-2.09 1-2.37.26-.28.58-.35.77-.35.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2 .89 2.15.07.15.12.33.02.53-.1.2-.15.32-.3.49-.15.17-.32.38-.46.51-.15.14-.3.3-.13.6.18.3.78 1.29 1.68 2.09 1.15 1.03 2.13 1.35 2.43 1.5.3.15.48.13.66-.08.18-.21.78-.91.99-1.22.21-.31.42-.26.7-.15.28.11 1.78.84 2.08.99.3.15.51.23.58.35.08.13.08.73-.16 1.41z"/>
+                </svg>
+                <span>Book Free Tour via WhatsApp →</span>
+              </a>
+
+              <a
+                href={PHONE_TEL}
+                className="w-full py-3.5 px-6 rounded-xl bg-[#1C1810] border border-[#D4A843]/50 text-[#E8C060] hover:bg-[#2E2A22] font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 transition-colors duration-200">
+                <span>📞 Call Central Hotline ({PHONE_NUMBER})</span>
+              </a>
+            </div>
+
+            {/* Commented Out Contact Form Code for Future Restoration */}
+            {/* 
+            <form onSubmit={handleSubmit} style={{ display: "none" }}>
+              <input name="name" value={form.name} onChange={handleChange} />
+              <input name="phone" value={form.phone} onChange={handleChange} />
+              <select name="branch" value={currentBranch} onChange={handleChange} />
+              <select name="goal" value={form.goal} onChange={handleChange} />
+              <button type="submit">Submit</button>
+            </form>
+            */}
           </div>
         </div>
       </div>
@@ -2953,7 +2969,7 @@ export function Footer() {
       style={{
         ...s.section,
         background: tokens.bgBase,
-        padding: isMobile ? "64px 0 96px" : "96px 0",
+        padding: isMobile ? "40px 0 24px" : "48px 0 28px",
         borderTop: `1px solid ${tokens.borderSubtle}`,
       }}>
       <div
@@ -2967,8 +2983,8 @@ export function Footer() {
           style={{
             display: "grid",
             gridTemplateColumns: footerGridCols,
-            gap: isMobile ? 32 : 48,
-            marginBottom: isMobile ? 40 : 64,
+            gap: isMobile ? 28 : 40,
+            marginBottom: isMobile ? 28 : 32,
           }}>
           {/* Brand */}
           <div style={isMobile ? { gridColumn: "1 / -1" } : {}}>
@@ -3076,7 +3092,7 @@ export function Footer() {
           style={{
             height: 1,
             background: `linear-gradient(to right, transparent, ${tokens.borderSubtle}, transparent)`,
-            marginBottom: 28,
+            marginBottom: 20,
           }}
         />
 

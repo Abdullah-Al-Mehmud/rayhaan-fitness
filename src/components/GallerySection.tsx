@@ -6,6 +6,7 @@ import { getGymTourWhatsAppUrl } from "@/data/gymData";
 import { trackEvent } from "@/lib/analytics";
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const INITIAL_DISPLAY_COUNT = 8;
@@ -219,79 +220,63 @@ export function GallerySection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* ── Section Header ─────────────────────────────────────── */}
-        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#D4A843]/30 bg-[#2E2A22]/80 backdrop-blur-sm mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8C060] animate-pulse" />
-            <span className="text-[0.68rem] tracking-[0.28em] uppercase font-bold text-[#E8C060]">
-              OUR ATMOSPHERE &amp; SPACES
-            </span>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12 sm:mb-16 border-b border-[#3D3528]/60 pb-8">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#D4A843]/30 bg-[#2E2A22]/80 backdrop-blur-sm mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E8C060] animate-pulse" />
+              <span className="text-[0.68rem] tracking-[0.28em] uppercase font-bold text-[#E8C060]">
+                OUR ATMOSPHERE &amp; SPACES
+              </span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#F0EAD6] leading-[1.12]">
+              Inside Rayhan Fitness:{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8C060] via-[#D4A843] to-[#B8891C]">
+                Where Champions Train
+              </span>
+            </h2>
+
+            <p className="mt-4 text-base sm:text-lg text-[#8C7A5A] leading-relaxed">
+              Explore our world-class machinery, panoramic views, and dedicated workout zones
+              across Lalbagh, Dhanmondi, and Mirpur.
+            </p>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-[#F0EAD6] leading-[1.12]">
-            Inside Rayhan Fitness:{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E8C060] via-[#D4A843] to-[#B8891C]">
-              Where Champions Train
-            </span>
-          </h2>
-
-          <p className="mt-4 text-base sm:text-lg text-[#8C7A5A] leading-relaxed max-w-2xl mx-auto">
-            Explore our world-class machinery, panoramic views, and dedicated workout zones
-            across Lalbagh, Dhanmondi, and Mirpur.
-          </p>
+          <div className="shrink-0">
+            <Link
+              href="/gallery"
+              className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#D4A843] via-[#E8C060] to-[#D4A843] text-[#0F0D0A] font-extrabold text-sm tracking-wider uppercase shadow-[0_4px_20px_rgba(212,168,67,0.3)] hover:shadow-[0_6px_28px_rgba(212,168,67,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
+              <span>See All Photos</span>
+              <span className="text-base">→</span>
+            </Link>
+          </div>
         </div>
 
-        {/* ── Uniform Grid (no layout animations — existing cards never re-animate) ── */}
+        {/* ── Uniform Grid (Initial curated items) ── */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {displayedItems.map((item, index) => {
-            const isNew =
-              visibleCount > INITIAL_DISPLAY_COUNT &&
-              index >= prevCountRef.current;
+          {displayedItems.slice(0, 8).map((item, index) => {
+            const isNew = false;
             return (
               <GalleryCard
                 key={item.id}
                 item={item}
                 index={index}
                 isNew={isNew}
-                staggerIndex={isNew ? index - prevCountRef.current : 0}
+                staggerIndex={0}
                 onOpen={openLightbox}
               />
             );
           })}
         </div>
 
-        {/* ── Load More Button / Completion State ──────────────────── */}
-        <div className="mt-12 sm:mt-16 text-center">
-          {hasMore ? (
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleLoadMore}
-              type="button"
-              className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#D4A843] via-[#E8C060] to-[#D4A843] text-[#0F0D0A] font-bold text-sm sm:text-base tracking-wider shadow-[0_6px_24px_rgba(212,168,67,0.25)] hover:shadow-[0_8px_30px_rgba(212,168,67,0.4)] transition-all duration-300 cursor-pointer"
-            >
-              <svg
-                className="w-4 h-4 text-[#0F0D0A]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 13l-7 7-7-7m14-8l-7 7-7-7"
-                />
-              </svg>
-              <span>Explore More Spaces ({GALLERY_ITEMS.length - visibleCount} more)</span>
-            </motion.button>
-          ) : (
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2E2A22]/70 border border-[#3D3528] text-xs text-[#8C7A5A]">
-              <span className="text-[#D4A843] font-bold">✓</span>
-              <span>
-                Showing all <strong className="text-[#F0EAD6]">{GALLERY_ITEMS.length}</strong> spaces
-              </span>
-            </div>
-          )}
+        {/* ── See All Action Button at Bottom ──────────────────── */}
+        <div className="mt-12 sm:mt-16 text-center flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/gallery"
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-[#D4A843] via-[#E8C060] to-[#D4A843] text-[#0F0D0A] font-extrabold text-sm sm:text-base tracking-wider uppercase shadow-[0_6px_25px_rgba(212,168,67,0.3)] hover:shadow-[0_8px_35px_rgba(212,168,67,0.5)] hover:scale-105 active:scale-95 transition-all duration-300">
+            <span>Explore Full Gallery Page ({GALLERY_ITEMS.length} Photos)</span>
+            <span className="text-lg">→</span>
+          </Link>
         </div>
       </div>
 

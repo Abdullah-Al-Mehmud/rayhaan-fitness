@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Rayhan Fitness | Best Gym in Dhaka (Lalbagh, Dhanmondi, Mirpur)",
   description:
     "Join Rayhan Fitness across Dhaka. Premium imported equipment, national champion trainers, dedicated female workout hours, and structured personal training programs.",
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
   keywords: [
     "rayhan fitness",
     "best gym in dhaka",

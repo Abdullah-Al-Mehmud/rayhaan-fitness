@@ -89,32 +89,28 @@ const PROGRAMS: Program[] = [
     id: "personal-trainer",
     title: "Personal Trainer",
     schedule: "Monday – Wednesday",
-    image:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop",
+    image: "/images/gallery/coach-rayhan-training.webp",
     tall: true,
   },
   {
     id: "outdoor-classes",
     title: "Outdoor Classes",
     schedule: "Tuesday – Thursday",
-    image:
-      "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?q=80&w=800&auto=format&fit=crop",
+    image: "/images/gallery/mirpur-community.webp",
     tall: false,
   },
   {
     id: "digital-coursing",
-    title: "Digital Coursing",
+    title: "Strength & Conditioning",
     schedule: "Friday – Saturday",
-    image:
-      "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop",
+    image: "/images/gallery/lalbagh-weights.webp",
     tall: true,
   },
   {
     id: "group-training",
     title: "Group Training",
     schedule: "Sunday – Monday",
-    image:
-      "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?q=80&w=800&auto=format&fit=crop",
+    image: "/images/gallery/female-coaching-staff.webp",
     tall: false,
   },
 ];
@@ -128,6 +124,7 @@ export default function ProgramsSection() {
   const [headerRef, headerInView] = useInView("-80px");
   const [gridRef, gridInView] = useInView("-60px");
   const [hovered, setHovered] = useState<string | null>(null);
+  const [activeProgramModal, setActiveProgramModal] = useState<Program | null>(null);
 
   const tallHeight = isMobile ? 320 : isTablet ? 380 : 460;
   const shortHeight = isMobile ? 320 : isTablet ? 340 : 360;
@@ -229,6 +226,7 @@ export default function ProgramsSection() {
                 key={p.id}
                 onMouseEnter={() => setHovered(p.id)}
                 onMouseLeave={() => setHovered(null)}
+                onClick={() => setActiveProgramModal(p)}
                 style={{
                   position: "relative",
                   height,
@@ -310,6 +308,35 @@ export default function ProgramsSection() {
           })}
         </div>
       </div>
+
+      {/* Lightbox Pop-up Modal for Programs */}
+      {activeProgramModal && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/92 backdrop-blur-xl p-4 sm:p-8 cursor-zoom-out select-none"
+          onClick={() => setActiveProgramModal(null)}>
+          <button
+            onClick={() => setActiveProgramModal(null)}
+            className="absolute top-5 right-5 z-10 w-11 h-11 rounded-full bg-[#1C1810] border border-[#3D3528] text-white hover:text-[#E8C060] hover:border-[#D4A843] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xl"
+            aria-label="Close modal">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div
+            className="relative max-w-4xl max-h-[85vh] w-full flex flex-col items-center cursor-default"
+            onClick={(e) => e.stopPropagation()}>
+            <img
+              src={activeProgramModal.image}
+              alt={activeProgramModal.title}
+              className="max-h-[75vh] w-auto max-w-full object-contain rounded-xl border border-white/10 shadow-2xl"
+            />
+            <div className="mt-4 text-center">
+              <h3 className="text-xl font-bold text-[#F0EAD6]">{activeProgramModal.title}</h3>
+              <p className="text-xs text-[#E8C060] tracking-wider mt-1">{activeProgramModal.schedule}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
